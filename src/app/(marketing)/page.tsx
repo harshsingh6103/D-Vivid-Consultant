@@ -1,4 +1,4 @@
-import { Background, Companies, Container, CTA, Features, Hero, Perks, Pricing, Reviews, Wrapper } from "@/components";
+import { Background, Companies, Container, CTA, CTASection, Hero, Perks, Reviews, Wrapper } from "@/components";
 import { Spotlight } from "@/components/ui/spotlight";
 
 const HomePage = () => {
@@ -15,9 +15,11 @@ const HomePage = () => {
                 <Container className="py-8 lg:py-20">
                     <Companies />
                 </Container>
-                <Features />
+                <CTASection 
+                    title="Take your psychometric test today"
+                    buttonText="Get started for free"
+                />
                 <Perks />
-                <Pricing />
                 <Reviews />
                 <CTA />
             </Wrapper>

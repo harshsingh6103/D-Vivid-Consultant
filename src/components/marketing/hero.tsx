@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import { BlurText } from "../ui/blur-text";
@@ -5,6 +7,51 @@ import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Container from "../global/container";
+import { useState, useEffect } from "react";
+
+const expertise = [
+    "Profile Evaluation",
+    "University & Course Selection", 
+    "Test Preparation",
+    "University Application",
+    "Visa Interview Preparation",
+    "Scholarships & Funding Guidance"
+];
+
+const TypewriterEffect = () => {
+    const [text, setText] = useState("");
+    const [index, setIndex] = useState(0);
+    const [wordIndex, setWordIndex] = useState(0);
+    const [isDeleting, setIsDeleting] = useState(false);
+    
+    useEffect(() => {
+        const currentWord = expertise[wordIndex];
+        
+        const timer = setTimeout(() => {
+            if (!isDeleting && index < currentWord.length) {
+                setText(currentWord.substring(0, index + 1));
+                setIndex(index + 1);
+            } else if (isDeleting && index > 0) {
+                setText(currentWord.substring(0, index - 1));
+                setIndex(index - 1);
+            } else if (!isDeleting && index === currentWord.length) {
+                setTimeout(() => setIsDeleting(true), 2000);
+            } else if (isDeleting && index === 0) {
+                setIsDeleting(false);
+                setWordIndex((wordIndex + 1) % expertise.length);
+            }
+        }, isDeleting ? 50 : 100);
+        
+        return () => clearTimeout(timer);
+    });
+    
+    return (
+        <span className="text-purple-400">
+            {text}
+            <span className="animate-pulse text-purple-500 ml-1">|</span>
+        </span>
+    );
+};
 
 const Hero = () => {
     return (
@@ -18,34 +65,34 @@ const Hero = () => {
                         <div className="w-1.5 h-1.5 rounded-full bg-primary flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         </div>
                     </div>
-                    <span className="inline-flex items-center justify-center gap-2 animate-text-gradient animate-background-shine bg-gradient-to-r from-[#b2a8fd] via-[#8678f9] to-[#c7d2fe] bg-[200%_auto] bg-clip-text text-sm text-transparent">
-                        Build for the future
+                    <span className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#b2a8fd] via-[#8678f9] to-[#c7d2fe] bg-clip-text text-sm text-transparent">
+                        The most trusted consultant in India
                         <span className="text-xs text-secondary-foreground px-1.5 py-0.5 rounded-full bg-gradient-to-b from-foreground/20 to-foreground/10 flex items-center justify-center">
-                            What&apos;s new
+                            Trusted
                             <ArrowRightIcon className="w-3.5 h-3.5 ml-1 text-foreground/50" />
                         </span>
                     </span>
                 </div>
             </Container>
-            <BlurText
-                word={"Your ultimate social media\n marketing tool"}
-                className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent py-2 md:py-0 lg:!leading-snug font-medium racking-[-0.0125em] mt-6 font-heading"
-            />
+            <div className="mt-6">
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent py-2 md:py-0 lg:!leading-snug font-medium tracking-[-0.0125em] font-heading">
+                    Study Abroad with D-Vivid
+                </h1>
+                <div className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent py-2 md:py-0 lg:!leading-snug font-medium tracking-[-0.0125em] font-heading mt-2">
+                    Expert in <TypewriterEffect />
+                </div>
+            </div>
             <Container delay={0.1}>
                 <p className="text-sm sm:text-base lg:text-lg mt-4 text-accent-foreground/60 max-w-2xl mx-auto">
-                    Elevate your social media presense with AI-powered content creation and scheduling. <span className="hidden sm:inline">Luro is the all-in-one solution for your social media marketing needs.</span>
+                    Trusted by 5,000+ students across 6 countries with 1,200+ universities worldwide.
                 </p>
             </Container>
             <Container delay={0.2}>
-                <div className="flex items-center justify-center md:gap-x-6 mt-8">
-                    <Button asChild size="lg">
-                        <Link href="/app">
-                            Start for free
-                        </Link>
-                    </Button>
-                    <Button asChild size="lg" variant="outline" className="hidden md:flex">
-                        <Link href="#">
-                            How it works
+                <div className="flex items-center justify-center mt-8">
+                    <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white px-8 py-6 text-lg font-medium rounded-full transition-all duration-300 hover:scale-105">
+                        <Link href="/consultation">
+                            Book a Free Consultation
+                            <ArrowRightIcon className="w-5 h-5 ml-2" />
                         </Link>
                     </Button>
                 </div>

@@ -3,10 +3,10 @@ import Marquee from "../ui/marquee";
 
 const Companies = () => {
     return (
-        <div className="flex w-full py-20">
+        <div className="flex w-full pt-4 pb-20">
             <div className="flex flex-col items-center justify-center text-center w-full py-2">
                 <h2 className="text-xl heading">
-                    Companies that trust us
+                    Proudly guiding thousands of students to top global universities
                 </h2>
                 <div className="mt-16 w-full relative overflow-hidden">
                     <Marquee pauseOnHover className="[--duration:30s]">

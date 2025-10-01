@@ -11,12 +11,14 @@ import SignUpForm from "./auth/signup-form";
 import Hero from "./marketing/hero";
 import Navbar from "./marketing/navbar";
 import Companies from "./marketing/companies";
-import Features from "./marketing/features";
+
 
 import Perks from "./marketing/perks";
-import Pricing from "./marketing/pricing";
+
 import Reviews from "./marketing/reviews";
 import CTA from "./marketing/cta";
+import CTASection from "./marketing/cta-section";
+import SimpleCTASection from "./marketing/simple-cta-section";
 import Footer from "./marketing/footer";
 
 export {
@@ -28,11 +30,11 @@ export {
     Hero,
     Navbar,
     Companies,
-    Features,
     Perks,
-    Pricing,
     Reviews,
     CTA,
+    CTASection,
+    SimpleCTASection,
     Footer,
     SignInForm,
     SignUpForm,
