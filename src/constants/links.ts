@@ -46,40 +46,29 @@ export const SIDEBAR_LINKS: Link[] = [
 
 export const FOOTER_LINKS = [
     {
-        title: "Product",
+        title: "STUDY ABROAD",
         links: [
-            { name: "Home", href: "/" },
-            { name: "Features", href: "/" },
-            { name: "Pricing", href: "/" },
-            { name: "Contact", href: "/" },
-            { name: "Download", href: "/" },
+            { name: "Study in USA", href: "/study/usa" },
+            { name: "Study in Canada", href: "/study/canada" },
+            { name: "Study in Australia", href: "/study/australia" },
+            { name: "Study in UK", href: "/study/uk" },
+            { name: "Study in Germany", href: "/study/germany" },
         ],
     },
     {
-        title: "Resources",
+        title: "Courses",
         links: [
-            { name: "Blog", href: "/blog" },
-            { name: "Help Center", href: "/help-center" },
-            { name: "Community", href: "/community" },
-            { name: "Guides", href: "/guides" },
+            { name: "PTE", href: "/courses/pte" },
+            { name: "IELTS", href: "/courses/ielts" },
+            { name: "TOEFL", href: "/courses/toefl" },
+            { name: "Duolingo", href: "/courses/duolingo" },
         ],
     },
     {
-        title: "Legal",
+        title: "Consultants",
         links: [
-            { name: "Privacy", href: "/privacy" },
-            { name: "Terms", href: "/terms" },
-            { name: "Cookies", href: "/cookies" },
-        ],
-    },
-    {
-        title: "Developers",
-        links: [
-            { name: "API Docs", href: "/api-docs" },
-            { name: "SDKs", href: "/sdks" },
-            { name: "Tools", href: "/tools" },
-            { name: "Open Source", href: "/open-source" },
-            { name: "Changelog", href: "/changelog" },
+            { name: "Study Abroad Consultant in Surat", href: "/consultants/surat" },
+            { name: "Study Abroad Consultant in Ahmedabad", href: "/consultants/ahmedabad" },
         ],
     },
 ];

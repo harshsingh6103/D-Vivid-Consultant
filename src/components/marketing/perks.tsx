@@ -6,15 +6,15 @@ import { SectionBadge } from "../ui/section-bade";
 
 const Perks = () => {
     return (
-        <div className="flex flex-col items-center justify-center py-12 md:py-16 lg:py-24 w-full">
+        <div id="perks" className="flex flex-col items-center justify-center py-12 md:py-16 lg:py-24 w-full">
             <Container>
                 <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
                     <SectionBadge title="Perks" />
                     <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-medium !leading-snug mt-6">
-                        Discover the benefits
+                        Why choose us ?
                     </h2>
                     <p className="text-base md:text-lg text-center text-accent-foreground/80 mt-6">
-                        Explore the powerful features and advantages that Luro offer to help you grow your social media presence
+                        Genuine Guidance & Ethical Working – Trusted by Thousands of Students
                     </p>
                 </div>
             </Container>

@@ -4,33 +4,33 @@ import React from "react";
 
 export const PERKS = [
     {
-        icon: ZapIcon,
-        title: "Fast and Efficient",
-        description: "Experience quick and seamless content creation with our optimized AI tools."
+        icon: BrainCircuitIcon,
+        title: "IELTS Preparation",
+        description: "Comprehensive IELTS test preparation with proven strategies and practice tests."
     },
     {
         icon: ChartSplineIcon,
-        title: "Insightful Analytics",
-        description: "Gain valuable insights and analytics to enhance your social media strategy."
+        title: "Psychometric Tests",
+        description: "Professional psychometric assessments to evaluate your academic readiness."
+    },
+    {
+        icon: ZapIcon,
+        title: "Study Abroad Guidance",
+        description: "Complete guidance for students planning to study overseas."
     },
     {
         icon: LifeBuoyIcon,
-        title: "24/7 Support",
-        description: "Our team is available around the clock to assist with any issues or questions."
-    },
-    {
-        icon: PaletteIcon,
-        title: "Customizable Solutions",
-        description: "Tailor the tools and features to fit your unique social media needs."
+        title: "Academic Counseling",
+        description: "Expert advice on course selection and academic planning."
     },
     {
         icon: ShieldCheckIcon,
-        title: "Secure and Reliable",
-        description: "Trust our platform to keep your data safe and ensure consistent performance."
+        title: "Documentation Support",
+        description: "Assistance with all required documentation and paperwork."
     },
     {
-        icon: WaypointsIcon,
-        title: "Seamless Integration",
-        description: "Easily integrate with your existing social media platforms and tools."
+        icon: SparklesIcon,
+        title: "Communication Training",
+        description: "Enhance your communication skills for academic and professional success."
     },
 ];

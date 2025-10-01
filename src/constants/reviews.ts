@@ -7,75 +7,51 @@ type REVIEW = {
 
 export const REVIEWS: REVIEW[] = [
     {
+        name: "Pooja Soni",
+        username: "@poojasoni",
+        review: "D-Vivid made my study abroad journey seamless! Their guidance helped me prepare for exams effectively and secure my visa faster than I expected. Truly better than any other consultancy!",
+        img: "https://randomuser.me/api/portraits/women/21.jpg"
+    },
+    {
+        name: "Krishna Patel",
+        username: "@krishnapatel",
+        review: "The mentors at D-Vivid were amazing. They helped me choose the right university, prepare for my tests, and even guided me through scholarships. Highly recommended!",
+        img: "https://randomuser.me/api/portraits/men/22.jpg"
+    },
+    {
+        name: "Yatri Parekh",
+        username: "@yatriparekh",
+        review: "I loved how personalized D-Vivid’s consultancy was. From test prep to visa assistance, they went above and beyond to ensure I was ready every step of the way.",
+        img: "https://randomuser.me/api/portraits/women/23.jpg"
+    },
+    {
+        name: "Liza Patel",
+        username: "@lizapatel",
+        review: "Thanks to D-Vivid, I got into my dream university faster than I imagined. Their support in exams, applications, and visa processes was unmatched.",
+        img: "https://randomuser.me/api/portraits/women/24.jpg"
+    },
+    {
         name: "Arjun Singh",
         username: "@arjunsingh",
-        review: "This platform has revolutionized the way I manage my projects. The AI tools are a game-changer!",
-        img: "https://randomuser.me/api/portraits/men/1.jpg"
+        review: "D-Vivid guided me through every stage of my study abroad journey, helping me secure scholarships and prepare for interviews. Their mentorship made all the difference.",
+        img: "https://randomuser.me/api/portraits/men/25.jpg"
     },
     {
         name: "Priya Nair",
         username: "@priyanair",
-        review: "Absolutely love the seamless integration with social media. It's made my content creation process so much easier.",
-        img: "https://randomuser.me/api/portraits/women/2.jpg"
+        review: "I couldn’t have asked for better guidance. D-Vivid helped me prepare for exams, choose the best universities, and get my visa quickly.",
+        img: "https://randomuser.me/api/portraits/women/26.jpg"
     },
     {
         name: "Rohan Mehta",
         username: "@rohanmehta",
-        review: "The features offered here are unmatched. My productivity has soared since I started using this service.",
-        img: "https://randomuser.me/api/portraits/men/3.jpg"
+        review: "The support from D-Vivid is unmatched. From exam prep to university applications, they ensured everything was smooth and fast.",
+        img: "https://randomuser.me/api/portraits/men/27.jpg"
     },
     {
         name: "Sneha Patel",
         username: "@snehapatel",
-        review: "Customer support is top-notch. They’re always ready to assist with any queries I have.",
-        img: "https://randomuser.me/api/portraits/women/4.jpg"
-    },
-    {
-        name: "Ankit Sharma",
-        username: "@ankitsharma",
-        review: "The customization options available are perfect for my business needs. Highly recommended!",
-        img: "https://randomuser.me/api/portraits/men/5.jpg"
-    },
-    {
-        name: "Meera Kapoor",
-        username: "@meerakapoor",
-        review: "The intuitive design and ease of use make this platform stand out. It's a must-have for any business.",
-        img: "https://randomuser.me/api/portraits/women/6.jpg"
-    },
-    {
-        name: "Vikram Desai",
-        username: "@vikramdesai",
-        review: "From analytics to AI-powered tools, this service covers everything I need to grow my business.",
-        img: "https://randomuser.me/api/portraits/men/7.jpg"
-    },
-    {
-        name: "Anjali Menon",
-        username: "@anjalimenon",
-        review: "I’m impressed with how much value I’m getting at this price point. It's worth every penny!",
-        img: "https://randomuser.me/api/portraits/women/8.jpg"
-    },
-    {
-        name: "Karan Gupta",
-        username: "@karangupta",
-        review: "The AI content generation is phenomenal. It saves me hours of work every week.",
-        img: "https://randomuser.me/api/portraits/men/9.jpg"
-    },
-    {
-        name: "Neha Verma",
-        username: "@nehaverma",
-        review: "I love how everything is organized in one place. It makes managing my tasks so much easier.",
-        img: "https://randomuser.me/api/portraits/women/10.jpg"
-    },
-    {
-        name: "Siddharth Jain",
-        username: "@siddharthjain",
-        review: "Their platform is robust, and I have seen a significant improvement in my workflow since I started using it.",
-        img: "https://randomuser.me/api/portraits/men/11.jpg"
-    },
-    {
-        name: "Divya Iyer",
-        username: "@divyaiyer",
-        review: "Fantastic service! The updates and new features keep getting better and better.",
-        img: "https://randomuser.me/api/portraits/women/12.jpg"
+        review: "D-Vivid’s consultancy helped me stay confident throughout the process. Their guidance in exams, applications, and visas was incredible.",
+        img: "https://randomuser.me/api/portraits/women/28.jpg"
     }
 ];

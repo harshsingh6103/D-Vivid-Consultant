@@ -18,74 +18,68 @@ const Menu = () => {
         <NavigationMenu>
             <NavigationMenuList>
                 <NavigationMenuItem>
-                    <Link href="/docs" legacyBehavior passHref>
-                        <NavigationMenuLink className="h-10 px-4 py-2 text-sm font-normal rounded-md text-muted-foreground hover:text-foreground w-max hover:bg-none">
-                            How it works
-                        </NavigationMenuLink>
-                    </Link>
+                    <button 
+                        onClick={() => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="h-10 px-4 py-2 text-sm font-normal rounded-md text-muted-foreground hover:text-foreground w-max hover:bg-none cursor-pointer"
+                    >
+                        Home
+                    </button>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground">
-                        Features
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid rounded-3xl gap-3 p-4 md:w-[400px] lg:w-[500px] xl:w-[550px] lg:grid-cols-[.75fr_1fr]">
-                            <li className="row-span-3">
-                                <NavigationMenuLink asChild>
-                                    <Link
-                                        href="/"
-                                        className="flex flex-col justify-end w-full h-full p-4 no-underline rounded-lg outline-none select-none bg-gradient-to-tr from-accent to-accent/50 focus:shadow-md"
-                                    >
-                                        <Icons.icon className="w-6 h-6" />
-                                        <div className="my-2 text-lg font-normal">
-                                            Luro AI
-                                        </div>
-                                        <p className="text-sm text-muted-foreground">
-                                            Your ultimate social media management tool
-                                        </p>
-                                    </Link>
-                                </NavigationMenuLink>
-                            </li>
-                            <Item title="Content Calendar" href="/features/content-calendar" icon={<CalendarRangeIcon className="w-5 h-5" />}>
-                                Plan and visualize your content strategy.
-                            </Item>
-                            <Item title="Hashtag Manager" href="/features/hashtag-manager" icon={<HashIcon className="w-5 h-5" />}>
-                                Research and track trending hashtags.
-                            </Item>
-                            <Item title="Competitor Analysis" href="/features/competitor-analysis" icon={<UsersIcon className="w-5 h-5" />}>
-                                Monitor and analyze competitor performance.
-                            </Item>
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link href="/pricing" legacyBehavior passHref>
-                        <NavigationMenuLink className="h-10 px-4 py-2 text-sm font-normal rounded-md text-muted-foreground hover:text-foreground w-max hover:bg-none">
-                            Pricing
-                        </NavigationMenuLink>
-                    </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link href="/integrations" legacyBehavior passHref>
-                        <NavigationMenuLink className="h-10 px-4 py-2 text-sm font-normal rounded-md text-muted-foreground hover:text-foreground w-max hover:bg-none">
-                            Integrations
-                        </NavigationMenuLink>
-                    </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground">
-                        Resources
+                        Test
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className="grid w-[400px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px] xl:w-[500px]">
-                            <Item title="Blog" href="/resources/blog" icon={<Newspaper className="w-5 h-5" />}>
-                                Read our latest articles and updates.
+                            <Item title="IELTS Test" href="/test/ielts" icon={<CalendarRangeIcon className="w-5 h-5" />}>
+                                Prepare for IELTS exam with our comprehensive test materials.
                             </Item>
-                            <Item title="Support" href="/resources/support" icon={<CircleHelp className="w-5 h-5" />}>
-                                Get help with any issues you may have.
+                            <Item title="Psychometric Test" href="/test/psychometric" icon={<HashIcon className="w-5 h-5" />}>
+                                Evaluate your academic readiness and personality traits.
+                            </Item>
+                            <Item title="Aptitude Test" href="/test/aptitude" icon={<UsersIcon className="w-5 h-5" />}>
+                                Assess your logical reasoning and problem-solving skills.
+                            </Item>
+                            <Item title="Mock Interviews" href="/test/interviews" icon={<CircleHelp className="w-5 h-5" />}>
+                                Practice university admission interviews with experts.
                             </Item>
                         </ul>
                     </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                    <button 
+                        onClick={() => {
+                            const element = document.getElementById('psychometric-test');
+                            element?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="h-10 px-4 py-2 text-sm font-normal rounded-md text-muted-foreground hover:text-foreground w-max hover:bg-none cursor-pointer"
+                    >
+                        Services
+                    </button>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                    <button 
+                        onClick={() => {
+                            const element = document.getElementById('perks');
+                            element?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="h-10 px-4 py-2 text-sm font-normal rounded-md text-muted-foreground hover:text-foreground w-max hover:bg-none cursor-pointer"
+                    >
+                        Perks
+                    </button>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                    <button 
+                        onClick={() => {
+                            const element = document.getElementById('testimonials');
+                            element?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="h-10 px-4 py-2 text-sm font-normal rounded-md text-muted-foreground hover:text-foreground w-max hover:bg-none cursor-pointer"
+                    >
+                        Testimonials
+                    </button>
                 </NavigationMenuItem>
             </NavigationMenuList>
         </NavigationMenu>
