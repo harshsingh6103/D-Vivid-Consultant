@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Brain, Globe, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
