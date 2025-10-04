@@ -5400,6 +5400,71 @@ const Images = {
             </defs>
         </svg>
     ),
+    // University icons
+    university1: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 5L25 15H20V30H10V15H5L15 5Z" />
+            <text x="30" y="25" fontSize="16" fontWeight="bold">Harvard</text>
+        </svg>
+    ),
+    university2: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="15" width="8" height="15" />
+            <rect x="5" y="10" width="2" height="25" />
+            <text x="15" y="25" fontSize="16" fontWeight="bold">MIT</text>
+        </svg>
+    ),
+    university3: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="20" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
+            <text x="25" y="25" fontSize="16" fontWeight="bold">Stanford</text>
+        </svg>
+    ),
+    university4: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 25L10 13L18 25H2Z" />
+            <text x="25" y="25" fontSize="16" fontWeight="bold">Cambridge</text>
+        </svg>
+    ),
+    university5: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="13" width="16" height="16" rx="2" />
+            <text x="25" y="25" fontSize="16" fontWeight="bold">Oxford</text>
+        </svg>
+    ),
+    university6: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 7L2 15V27L10 35L18 27V15L10 7Z" />
+            <text x="25" y="25" fontSize="16" fontWeight="bold">Toronto</text>
+        </svg>
+    ),
+    university7: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="15" r="4" />
+            <circle cx="10" cy="27" r="4" />
+            <text x="25" y="25" fontSize="16" fontWeight="bold">Melbourne</text>
+        </svg>
+    ),
+    university8: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="10,7 18,15 10,23 2,15" />
+            <text x="25" y="25" fontSize="16" fontWeight="bold">Sydney</text>
+        </svg>
+    ),
+    university9: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 20C2 14 7 9 14 9S26 14 26 20" stroke="currentColor" strokeWidth="2" fill="none" />
+            <text x="30" y="25" fontSize="16" fontWeight="bold">McGill</text>
+        </svg>
+    ),
+    university10: (props: LucideProps) => (
+        <svg {...props} viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="11" width="4" height="20" />
+            <rect x="8" y="15" width="4" height="16" />
+            <rect x="14" y="19" width="4" height="12" />
+            <text x="25" y="25" fontSize="16" fontWeight="bold">Yale</text>
+        </svg>
+    ),
 };
 
 export default Images;

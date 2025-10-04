@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, PlayIcon, PauseIcon } from "lucide-react";
 import Link from "next/link";
 import { BlurText } from "../ui/blur-text";
 import { Button } from "../ui/button";
@@ -53,6 +53,56 @@ const TypewriterEffect = () => {
     );
 };
 
+const YouTubeVideoPlayer = () => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const videoId = "LsntzoOotpQ"; // Extracted from the YouTube URL
+    
+    const togglePlay = () => {
+        setIsPlaying(!isPlaying);
+    };
+    
+    if (!isPlaying) {
+        return (
+            <div className="relative cursor-pointer group" onClick={togglePlay}>
+                <Image
+                    src="/images/yt_front.jpg"
+                    alt="Video Thumbnail"
+                    width={1920}
+                    height={1080}
+                    className="rounded-lg lg:rounded-[20px] w-full h-auto"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-black/60 rounded-full p-4 group-hover:bg-black/80 transition-colors duration-300">
+                        <PlayIcon className="w-12 h-12 text-white ml-1" />
+                    </div>
+                </div>
+                <div className="absolute inset-0 bg-black/20 rounded-lg lg:rounded-[20px] group-hover:bg-black/10 transition-colors duration-300"></div>
+            </div>
+        );
+    }
+    
+    return (
+        <div className="relative">
+            <iframe
+                width="100%"
+                height="540"
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="rounded-lg lg:rounded-[20px] w-full aspect-video"
+            ></iframe>
+            <button
+                onClick={togglePlay}
+                className="absolute top-4 right-4 bg-black/60 hover:bg-black/80 rounded-full p-2 transition-colors duration-300"
+            >
+                <PauseIcon className="w-6 h-6 text-white" />
+            </button>
+        </div>
+    );
+};
+
 const Hero = () => {
     return (
         <div className="flex flex-col items-center text-center w-full max-w-5xl my-24 mx-auto z-40 relative">
@@ -102,13 +152,7 @@ const Hero = () => {
                     <div className="absolute top-1/4 left-1/2 -z-10 gradient w-3/4 -translate-x-1/2 h-1/4 -translate-y-1/2 inset-0 blur-[10rem]"></div>
 
                     <div className="rounded-lg lg:rounded-[24px] border p-2 border-neutral-700 bg-black">
-                        <Image
-                            src="/images/dashboard.png"
-                            alt="dashboard"
-                            width={1920}
-                            height={1080}
-                            className="rounded-lg lg:rounded-[20px]"
-                        />
+                        <YouTubeVideoPlayer />
                     </div>
                 </div>
             </Container>

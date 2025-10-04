@@ -1,8 +1,11 @@
+"use client";
+
 import { REVIEWS } from "@/constants";
 import Container from "../global/container";
 import Marquee from "../ui/marquee";
 import { SectionBadge } from "../ui/section-bade";
 import Image from "next/image";
+import { useState } from "react";
 
 const firstRow = REVIEWS.slice(0, REVIEWS.length / 2);
 const secondRow = REVIEWS.slice(REVIEWS.length / 2);
@@ -56,10 +59,40 @@ const ReviewCard = ({
     username: string;
     review: string;
 }) => {
+    const [imageError, setImageError] = useState(false);
+    
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(n => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
+    };
+
+    const handleImageError = () => {
+        setImageError(true);
+    };
+
     return (
         <figure className="relative w-64 cursor-pointer overflow-hidden rounded-xl border border-foreground/5 bg-neutral-50/[.05] hover:bg-foreground/10 p-4 transition-all duration-300 ease-in-out">
             <div className="flex flex-row items-center gap-2">
-                <Image className="rounded-full" width="32" height="32" alt="" src={img} />
+                <div className="relative w-8 h-8">
+                    {!imageError ? (
+                        <Image 
+                            className="rounded-full" 
+                            width="32" 
+                            height="32" 
+                            alt={`${name} profile`}
+                            src={img}
+                            onError={handleImageError}
+                        />
+                    ) : (
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                            {getInitials(name)}
+                        </div>
+                    )}
+                </div>
                 <div className="flex flex-col">
                     <figcaption className="text-sm font-medium text-foreground">
                         {name}
