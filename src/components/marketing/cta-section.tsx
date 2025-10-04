@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Brain, Globe, GraduationCap } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import StudyAbroadSurvey from "../assessment/StudyAbroadSurvey";
 import { Button } from "../ui/button";
 import { CardSpotlight } from "../ui/card-spotlight";
 import { LampContainer } from "../ui/lamp";
@@ -20,8 +22,11 @@ const CTASection = ({
   href = "/auth/signup",
   className 
 }: CTASectionProps) => {
+  const [showAssessment, setShowAssessment] = useState(false);
+
   return (
     <div id="services">
+      <div id="psychometric-test"></div>
       <LampContainer className={className}>
       <motion.div
         initial={{ opacity: 0.5, y: 100 }}
@@ -37,46 +42,56 @@ const CTASection = ({
           {title}
         </h1>
         
-        {/* Test Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 w-full max-w-6xl">
-          <TestCard 
-            title="IELTS Preparation"
-            description="Comprehensive IELTS test preparation with proven strategies and practice tests."
-            icon={<BookOpen className="w-8 h-8 text-purple-400" />}
-            testType="ielts"
-          />
-          <TestCard 
-            title="Psychometric Tests"
-            description="Professional psychometric assessments to evaluate your academic readiness."
-            icon={<Brain className="w-8 h-8 text-purple-400" />}
-            testType="psychometric"
-          />
-          <TestCard 
-            title="Study Abroad Guidance"
-            description="Complete guidance for students planning to study overseas."
-            icon={<Globe className="w-8 h-8 text-purple-400" />}
-            testType="guidance"
-          />
-          <TestCard 
-            title="Academic Counseling"
-            description="Expert advice on course selection and academic planning."
-            icon={<GraduationCap className="w-8 h-8 text-purple-400" />}
-            testType="counseling"
-          />
-        </div>
-        
-        <div className="mt-12">
-          <Button 
-            asChild
-            size="lg"
-            className="group relative overflow-hidden bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-400 hover:to-violet-500 text-white px-8 py-6 text-lg font-medium rounded-full transition-all duration-300 hover:scale-105"
-          >
-            <Link href={href}>
-              {buttonText}
-              <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
-        </div>
+        {!showAssessment ? (
+          <>
+            {/* Test Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 w-full max-w-6xl">
+              <TestCard 
+                title="IELTS Preparation"
+                description="Comprehensive IELTS test preparation with proven strategies and practice tests."
+                icon={<BookOpen className="w-8 h-8 text-purple-400" />}
+                testType="ielts"
+                onAssessmentClick={setShowAssessment}
+              />
+              <TestCard 
+                title="Study Abroad Assessment"
+                description="Complete 54-question assessment to evaluate your study abroad readiness."
+                icon={<Brain className="w-8 h-8 text-purple-400" />}
+                testType="assessment"
+                onAssessmentClick={setShowAssessment}
+              />
+              <TestCard 
+                title="Study Abroad Guidance"
+                description="Complete guidance for students planning to study overseas."
+                icon={<Globe className="w-8 h-8 text-purple-400" />}
+                testType="guidance"
+                onAssessmentClick={setShowAssessment}
+              />
+              <TestCard 
+                title="Academic Counseling"
+                description="Expert advice on course selection and academic planning."
+                icon={<GraduationCap className="w-8 h-8 text-purple-400" />}
+                testType="counseling"
+                onAssessmentClick={setShowAssessment}
+              />
+            </div>
+            
+
+          </>
+        ) : (
+          <div className="mt-12 w-full max-w-6xl">
+            <div className="mb-8 text-center">
+              <Button 
+                onClick={() => setShowAssessment(false)}
+                variant="outline"
+                className="mb-4"
+              >
+                ← Back to Tests
+              </Button>
+            </div>
+            <StudyAbroadSurvey />
+          </div>
+        )}
       </motion.div>
     </LampContainer>
     </div>
@@ -88,12 +103,14 @@ const TestCard = ({
   title, 
   description, 
   icon, 
-  testType 
+  testType,
+  onAssessmentClick
 }: { 
   title: string; 
   description: string; 
   icon: React.ReactNode;
   testType: string;
+  onAssessmentClick?: (show: boolean) => void;
 }) => {
   return (
     <CardSpotlight className="h-96 w-full">
@@ -111,16 +128,27 @@ const TestCard = ({
         </p>
         
         <div className="mt-6 pt-4 border-t border-neutral-700">
-          <Button 
-            asChild
-            size="sm"
-            className="w-full bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white font-medium rounded-lg transition-all duration-200"
-          >
-            <Link href={`/test/${testType}`}>
+          {testType === 'assessment' ? (
+            <Button 
+              onClick={() => onAssessmentClick?.(true)}
+              size="sm"
+              className="w-full bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white font-medium rounded-lg transition-all duration-200"
+            >
               Take Test
               <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
-          </Button>
+            </Button>
+          ) : (
+            <Button 
+              asChild
+              size="sm"
+              className="w-full bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white font-medium rounded-lg transition-all duration-200"
+            >
+              <Link href={`/test/${testType}`}>
+                Take Test
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </CardSpotlight>

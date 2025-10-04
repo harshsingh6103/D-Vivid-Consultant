@@ -8,6 +8,8 @@ import Providers from "./global/providers";
 import SignInForm from "./auth/signin-form";
 import SignUpForm from "./auth/signup-form";
 
+import StudyAbroadSurvey from "./assessment/StudyAbroadSurvey";
+
 import Hero from "./marketing/hero";
 import Navbar from "./marketing/navbar";
 import Companies from "./marketing/companies";
@@ -38,5 +40,6 @@ export {
     Footer,
     SignInForm,
     SignUpForm,
+    StudyAbroadSurvey,
     Providers,
 };

@@ -72,12 +72,17 @@ const MobileMenu = ({ isOpen, setIsOpen }: Props) => {
                                     </Link>
                                 </li>
                                 <li
+                                    onClick={() => {
+                                        const element = document.getElementById('psychometric-test');
+                                        element?.scrollIntoView({ behavior: 'smooth' });
+                                        setIsOpen(false);
+                                    }}
                                     className="w-full px-4 py-2 text-lg font-normal transition transform rounded-md cursor-pointer text-foreground/80 hover:text-muted-foreground text-start active:scale-95 hover:bg-muted/20 active:opacity-80"
                                 >
-                                    <Link href="/test/psychometric" className="flex items-center w-full text-start">
+                                    <div className="flex items-center w-full text-start">
                                         <LineChart className="w-4 h-4 mr-2" />
-                                        Psychometric Test
-                                    </Link>
+                                        Study Abroad Assessment
+                                    </div>
                                 </li>
                                 <li
                                     className="w-full px-4 py-2 text-lg font-normal transition transform rounded-md cursor-pointer text-foreground/80 hover:text-muted-foreground text-start active:scale-95 hover:bg-muted/20 active:opacity-80"

@@ -36,8 +36,8 @@ const Menu = () => {
                             <Item title="IELTS Test" href="/test/ielts" icon={<CalendarRangeIcon className="w-5 h-5" />}>
                                 Prepare for IELTS exam with our comprehensive test materials.
                             </Item>
-                            <Item title="Psychometric Test" href="/test/psychometric" icon={<HashIcon className="w-5 h-5" />}>
-                                Evaluate your academic readiness and personality traits.
+                            <Item title="Study Abroad Assessment" href="#psychometric-test" icon={<HashIcon className="w-5 h-5" />}>
+                                Complete our comprehensive 54-question readiness assessment.
                             </Item>
                             <Item title="Aptitude Test" href="/test/aptitude" icon={<UsersIcon className="w-5 h-5" />}>
                                 Assess your logical reasoning and problem-solving skills.
