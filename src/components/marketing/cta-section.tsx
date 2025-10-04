@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Brain, Globe, GraduationCap } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StudyAbroadSurvey from "../assessment/StudyAbroadSurvey";
 import ConciseSurvey from "../assessment/ConciseSurvey";
 import ExpandedSurvey from "../assessment/ExpandedSurvey";
@@ -30,6 +30,41 @@ const CTASection = ({
   const [showExpandedSurvey, setShowExpandedSurvey] = useState(false);
   const [showUltraQuickSurvey, setShowUltraQuickSurvey] = useState(false);
 
+  // Listen for custom events from navigation menu
+  useEffect(() => {
+    const handleOpenTest = (event: CustomEvent) => {
+      const { testType } = event.detail;
+      
+      // Reset all tests first
+      setShowAssessment(false);
+      setShowConciseSurvey(false);
+      setShowExpandedSurvey(false);
+      setShowUltraQuickSurvey(false);
+      
+      // Open the specific test
+      switch(testType) {
+        case 'assessment':
+          setShowAssessment(true);
+          break;
+        case 'expanded':
+          setShowExpandedSurvey(true);
+          break;
+        case 'concise':
+          setShowConciseSurvey(true);
+          break;
+        case 'ultraquick':
+          setShowUltraQuickSurvey(true);
+          break;
+      }
+    };
+
+    window.addEventListener('openTest', handleOpenTest as EventListener);
+    
+    return () => {
+      window.removeEventListener('openTest', handleOpenTest as EventListener);
+    };
+  }, []);
+
   return (
     <div id="services">
       <div id="psychometric-test"></div>
@@ -53,8 +88,8 @@ const CTASection = ({
             {/* Test Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 w-full max-w-6xl">
               <TestCard 
-                title="Study Abroad Assessment"
-                description="Complete 54-question assessment to evaluate your study abroad readiness."
+                title="Comprehensive Assessment"
+                description="54-question test to evaluate overall study abroad readiness. (20–25 mins)"
                 icon={<BookOpen className="w-8 h-8 text-purple-400" />}
                 testType="assessment"
                 onAssessmentClick={setShowAssessment}
@@ -64,7 +99,7 @@ const CTASection = ({
               />
               <TestCard 
                 title="Expanded Assessment"
-                description="Detailed 42-question assessment covering all categories (15-20 minutes)."
+                description="42 questions covering academic, emotional, and financial aspects. (15–20 mins)"
                 icon={<Brain className="w-8 h-8 text-purple-400" />}
                 testType="expanded"
                 onAssessmentClick={setShowAssessment}
@@ -73,8 +108,8 @@ const CTASection = ({
                 onUltraQuickClick={setShowUltraQuickSurvey}
               />
               <TestCard 
-                title="Study Assessment"
-                description="A focused 25-question readiness assessment"
+                title="Focused Assessment"
+                description="25 questions to measure readiness across key areas. (10–12 mins)"
                 icon={<Globe className="w-8 h-8 text-purple-400" />}
                 testType="concise"
                 onAssessmentClick={setShowAssessment}
@@ -83,8 +118,8 @@ const CTASection = ({
                 onUltraQuickClick={setShowUltraQuickSurvey}
               />
               <TestCard 
-                title="Ultra-Quick Assessment"
-                description="Fast snapshot check - 12 questions covering all categories (3-5 minutes)."
+                title="Quick Check"
+                description="12 quick questions for an instant readiness snapshot. (3–5 mins)"
                 icon={<GraduationCap className="w-8 h-8 text-purple-400" />}
                 testType="ultraquick"
                 onAssessmentClick={setShowAssessment}

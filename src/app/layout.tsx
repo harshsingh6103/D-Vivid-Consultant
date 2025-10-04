@@ -13,6 +13,12 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                <link rel="icon" href="/images/Favicon.png" type="image/png" />
+                <link rel="icon" href="/images/Favicon.png" sizes="32x32" type="image/png" />
+                <link rel="icon" href="/images/Favicon.png" sizes="16x16" type="image/png" />
+                <link rel="apple-touch-icon" href="/images/Favicon.png" />
+            </head>
             <body
                 className={cn(
                     "min-h-screen bg-background text-foreground antialiased font-default overflow-x-hidden !scrollbar-hide",

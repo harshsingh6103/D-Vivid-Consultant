@@ -51,7 +51,7 @@ const Navbar = () => {
                     <div className="flex items-center justify-between w-full sticky mt-[7px] lg:mt-auto mb-auto inset-x-0">
                         <div className="flex items-center flex-1 lg:flex-none pl-1">
                             <Link href="/" className="text-lg font-semibold text-foreground">
-                                <Icons.icon className="w-auto h-5" />
+                                <Icons.icon className="w-auto h-8" />
                             </Link>
                             <div className="items-center hidden ml-4 lg:flex">
                                 <Menu />

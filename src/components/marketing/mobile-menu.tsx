@@ -4,7 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { cn } from "@/functions";
 import { useClickOutside } from "@/hooks";
 import { motion } from "framer-motion";
-import { Box, CalendarClock, Captions, CircleHelp, CopyCheck, FileText, Gem, Layers3, LineChart, Newspaper, UserCog, Waypoints } from "lucide-react";
+import { BookOpen, Brain, Globe, GraduationCap, CopyCheck, Gem, Newspaper, UserCog, Waypoints } from "lucide-react";
 import Link from "next/link";
 import React from 'react';
 
@@ -64,41 +64,72 @@ const MobileMenu = ({ isOpen, setIsOpen }: Props) => {
                             </AccordionTrigger>
                             <AccordionContent onClick={() => setIsOpen(false)} className="flex flex-col items-start gap-1 mt-1">
                                 <li
+                                    onClick={() => {
+                                        const element = document.getElementById('psychometric-test');
+                                        element?.scrollIntoView({ behavior: 'smooth' });
+                                        setIsOpen(false);
+                                        setTimeout(() => {
+                                            const event = new CustomEvent('openTest', { detail: { testType: 'assessment' } });
+                                            window.dispatchEvent(event);
+                                        }, 800);
+                                    }}
                                     className="w-full px-4 py-2 text-lg font-normal transition transform rounded-md cursor-pointer text-foreground/80 hover:text-muted-foreground text-start active:scale-95 hover:bg-muted/20 active:opacity-80"
                                 >
-                                    <Link href="/test/ielts" className="flex items-center w-full text-start">
-                                        <CalendarClock className="w-4 h-4 mr-2" />
-                                        IELTS Test
-                                    </Link>
+                                    <div className="flex items-center w-full text-start">
+                                        <BookOpen className="w-4 h-4 mr-2" />
+                                        Comprehensive Assessment
+                                    </div>
                                 </li>
                                 <li
                                     onClick={() => {
                                         const element = document.getElementById('psychometric-test');
                                         element?.scrollIntoView({ behavior: 'smooth' });
                                         setIsOpen(false);
+                                        setTimeout(() => {
+                                            const event = new CustomEvent('openTest', { detail: { testType: 'expanded' } });
+                                            window.dispatchEvent(event);
+                                        }, 800);
                                     }}
                                     className="w-full px-4 py-2 text-lg font-normal transition transform rounded-md cursor-pointer text-foreground/80 hover:text-muted-foreground text-start active:scale-95 hover:bg-muted/20 active:opacity-80"
                                 >
                                     <div className="flex items-center w-full text-start">
-                                        <LineChart className="w-4 h-4 mr-2" />
-                                        Study Abroad Assessment
+                                        <Brain className="w-4 h-4 mr-2" />
+                                        Expanded Assessment
                                     </div>
                                 </li>
                                 <li
+                                    onClick={() => {
+                                        const element = document.getElementById('psychometric-test');
+                                        element?.scrollIntoView({ behavior: 'smooth' });
+                                        setIsOpen(false);
+                                        setTimeout(() => {
+                                            const event = new CustomEvent('openTest', { detail: { testType: 'concise' } });
+                                            window.dispatchEvent(event);
+                                        }, 800);
+                                    }}
                                     className="w-full px-4 py-2 text-lg font-normal transition transform rounded-md cursor-pointer text-foreground/80 hover:text-muted-foreground text-start active:scale-95 hover:bg-muted/20 active:opacity-80"
                                 >
-                                    <Link href="/test/aptitude" className="flex items-center w-full text-start">
-                                        <Captions className="w-4 h-4 mr-2" />
-                                        Aptitude Test
-                                    </Link>
+                                    <div className="flex items-center w-full text-start">
+                                        <Globe className="w-4 h-4 mr-2" />
+                                        Focused Assessment
+                                    </div>
                                 </li>
                                 <li
+                                    onClick={() => {
+                                        const element = document.getElementById('psychometric-test');
+                                        element?.scrollIntoView({ behavior: 'smooth' });
+                                        setIsOpen(false);
+                                        setTimeout(() => {
+                                            const event = new CustomEvent('openTest', { detail: { testType: 'ultraquick' } });
+                                            window.dispatchEvent(event);
+                                        }, 800);
+                                    }}
                                     className="w-full px-4 py-2 text-lg font-normal transition transform rounded-md cursor-pointer text-foreground/80 hover:text-muted-foreground text-start active:scale-95 hover:bg-muted/20 active:opacity-80"
                                 >
-                                    <Link href="/test/interviews" className="flex items-center w-full text-start">
-                                        <CircleHelp className="w-4 h-4 mr-2" />
-                                        Mock Interviews
-                                    </Link>
+                                    <div className="flex items-center w-full text-start">
+                                        <GraduationCap className="w-4 h-4 mr-2" />
+                                        Quick Check
+                                    </div>
                                 </li>
                             </AccordionContent>
                         </AccordionItem>

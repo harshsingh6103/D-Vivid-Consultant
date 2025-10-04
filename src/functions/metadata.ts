@@ -17,21 +17,30 @@ interface MetadataProps {
 }
 
 export const generateMetadata = ({
-    title = `${process.env.NEXT_PUBLIC_APP_NAME} - Smart Social Media Marketing Platform`,
-    description = "Streamline your social media management with AI-powered analytics, scheduling, and content optimization. Get real-time insights, automate posts, and boost engagement across all platforms",
+    title = `${process.env.NEXT_PUBLIC_APP_NAME} - Empowering Global Education Dreams`,
+    description = "D-Vivid Consultancy is a trusted study abroad partner helping students achieve their global education dreams. From university selection to visa guidance, we provide expert end-to-end counseling to make your international journey seamless and successful.",
     image = "/thumbnail.png",
     icons = [
         {
             rel: "icon",
             type: "image/png",
+            url: "/d-vivid-favicon.png"
+        },
+        {
+            rel: "icon",
+            type: "image/png",
             sizes: "32x32",
-            url: "/icons/favicon-32x32.png"
+            url: "/d-vivid-favicon.png"
         },
         {
             rel: "icon",
             type: "image/png",
             sizes: "16x16",
-            url: "/icons/favicon-16x16.png"
+            url: "/d-vivid-favicon.png"
+        },
+        {
+            rel: "apple-touch-icon",
+            url: "/d-vivid-favicon.png"
         },
     ],
     noIndex = false,
@@ -51,7 +60,7 @@ export const generateMetadata = ({
     publishedTime,
     modifiedTime
 }: MetadataProps = {}): Metadata => {
-    const metadataBase = new URL(process.env.NEXT_PUBLIC_APP_URL || "https://luro-ai.vercel.app");
+    const metadataBase = new URL(process.env.NEXT_PUBLIC_APP_URL || "https://d-vivid-consultant-alpha.vercel.app/");
     const imageUrl = image ? new URL(image, metadataBase).toString() : null;
 
     return {

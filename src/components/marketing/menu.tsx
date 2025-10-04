@@ -1,7 +1,7 @@
 "use client"
 
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { CalendarRangeIcon, CircleHelp, HashIcon, Newspaper, UsersIcon } from 'lucide-react';
+import { BookOpen, Brain, Globe, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import Icons from "../global/icons";
@@ -33,18 +33,18 @@ const Menu = () => {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className="grid w-[400px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px] xl:w-[500px]">
-                            <Item title="IELTS Test" href="/test/ielts" icon={<CalendarRangeIcon className="w-5 h-5" />}>
-                                Prepare for IELTS exam with our comprehensive test materials.
-                            </Item>
-                            <Item title="Study Abroad Assessment" href="#psychometric-test" icon={<HashIcon className="w-5 h-5" />}>
-                                Complete our comprehensive 54-question readiness assessment.
-                            </Item>
-                            <Item title="Aptitude Test" href="/test/aptitude" icon={<UsersIcon className="w-5 h-5" />}>
-                                Assess your logical reasoning and problem-solving skills.
-                            </Item>
-                            <Item title="Mock Interviews" href="/test/interviews" icon={<CircleHelp className="w-5 h-5" />}>
-                                Practice university admission interviews with experts.
-                            </Item>
+                            <TestItem title="Comprehensive Assessment" testType="assessment" icon={<BookOpen className="w-5 h-5" />}>
+                                54-question test to evaluate overall study abroad readiness. (20–25 mins)
+                            </TestItem>
+                            <TestItem title="Expanded Assessment" testType="expanded" icon={<Brain className="w-5 h-5" />}>
+                                42 questions covering academic, emotional, and financial aspects. (15–20 mins)
+                            </TestItem>
+                            <TestItem title="Focused Assessment" testType="concise" icon={<Globe className="w-5 h-5" />}>
+                                25 questions to measure readiness across key areas. (10–12 mins)
+                            </TestItem>
+                            <TestItem title="Quick Check" testType="ultraquick" icon={<GraduationCap className="w-5 h-5" />}>
+                                12 quick questions for an instant readiness snapshot. (3–5 mins)
+                            </TestItem>
                         </ul>
                     </NavigationMenuContent>
                 </NavigationMenuItem>
@@ -108,6 +108,43 @@ const Item = ({ title, href, children, icon, ...props }: Props) => {
                         </p>
                     </div>
                 </Link>
+            </NavigationMenuLink>
+        </li>
+    )
+};
+
+const TestItem = ({ title, testType, children, icon }: { title: string; testType: string; children: React.ReactNode; icon: React.ReactNode }) => {
+    const handleTestClick = () => {
+        // First scroll to the section
+        const element = document.getElementById('psychometric-test');
+        element?.scrollIntoView({ behavior: 'smooth' });
+        
+        // Then trigger the appropriate test after a short delay
+        setTimeout(() => {
+            const event = new CustomEvent('openTest', { detail: { testType } });
+            window.dispatchEvent(event);
+        }, 800);
+    };
+
+    return (
+        <li>
+            <NavigationMenuLink asChild>
+                <button
+                    onClick={handleTestClick}
+                    className="grid grid-cols-[.15fr_1fr] select-none space-y-1 rounded-lg p-3 leading-none no-underline outline-none transition-colors hover:bg-accent/50 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground group w-full text-left"
+                >
+                    <div className="flex items-center mt-1 justify-center p-1 w-8 h-8 rounded-md border border-border/80">
+                        {icon}
+                    </div>
+                    <div className="text-start ml-3">
+                        <span className="text-sm group-hover:text-foreground font-normal leading-none">
+                            {title}
+                        </span>
+                        <p className="text-sm mt-0.5 line-clamp-2 text-muted-foreground">
+                            {children}
+                        </p>
+                    </div>
+                </button>
             </NavigationMenuLink>
         </li>
     )
