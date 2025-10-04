@@ -17,6 +17,13 @@ const Navbar = () => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
+    const scrollToContact = () => {
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+            contactSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -51,11 +58,9 @@ const Navbar = () => {
                             </div>
                         </div>
                         <div className="items-center flex gap-2 lg:gap-4">
-                            <Button size="sm" variant="white" asChild className="hidden sm:flex">
-                                <Link href="/contact">
-                                    Contact us
-                                    <ArrowRightIcon className="w-4 h-4 ml-2 hidden lg:block" />
-                                </Link>
+                            <Button size="sm" variant="white" onClick={scrollToContact} className="hidden sm:flex">
+                                Contact us
+                                <ArrowRightIcon className="w-4 h-4 ml-2 hidden lg:block" />
                             </Button>
                             <Button
                                 size="icon"

@@ -104,6 +104,13 @@ const YouTubeVideoPlayer = () => {
 };
 
 const Hero = () => {
+    const scrollToContact = () => {
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+            contactSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <div className="flex flex-col items-center text-center w-full max-w-5xl my-24 mx-auto z-40 relative">
             <Container delay={0.0}>
@@ -139,11 +146,9 @@ const Hero = () => {
             </Container>
             <Container delay={0.2}>
                 <div className="flex items-center justify-center mt-8">
-                    <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white px-8 py-6 text-lg font-medium rounded-full transition-all duration-300 hover:scale-105">
-                        <Link href="/consultation">
-                            Book a Free Consultation
-                            <ArrowRightIcon className="w-5 h-5 ml-2" />
-                        </Link>
+                    <Button onClick={scrollToContact} size="lg" className="bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white px-8 py-6 text-lg font-medium rounded-full transition-all duration-300 hover:scale-105">
+                        Book a Free Consultation
+                        <ArrowRightIcon className="w-5 h-5 ml-2" />
                     </Button>
                 </div>
             </Container>

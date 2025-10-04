@@ -59,7 +59,7 @@ const Footer = () => {
                     </div>
 
                     {/* Contact Information */}
-                    <div className="relative z-10 border-t border-border pt-8 mb-8">
+                    <div id="contact" className="relative z-10 border-t border-border pt-8 mb-8">
                         <h4 className="text-lg font-semibold mb-6 text-foreground">Contact Us</h4>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             
