@@ -1,0 +1,531 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Progress } from "../ui/progress";
+import { CheckCircle } from "lucide-react";
+
+interface Question {
+  id: string;
+  section: string;
+  question: string;
+  options: {
+    A: string;
+    B: string;
+    C: string;
+    D: string;
+  };
+}
+
+interface UserInfo {
+  email: string;
+  mobile: string;
+}
+
+interface Response {
+  questionId: string;
+  answer: string;
+  section: string;
+}
+
+const conciseQuestions: Question[] = [
+  // Section 1: Academic Readiness (5 Questions)
+  {
+    id: "Q1",
+    section: "Academic Readiness",
+    question: "How would you describe your academic performance?",
+    options: {
+      A: "Consistently high (above 85%)",
+      B: "Good (70–85%)",
+      C: "Average (55–70%)",
+      D: "Below average (below 55%)"
+    }
+  },
+  {
+    id: "Q2",
+    section: "Academic Readiness", 
+    question: "Have you attempted or planned standardized tests (IELTS/TOEFL, GRE/GMAT, SAT)?",
+    options: {
+      A: "Already taken and scored well",
+      B: "Preparing actively",
+      C: "Planned but not started",
+      D: "Not considered yet"
+    }
+  },
+  {
+    id: "Q3",
+    section: "Academic Readiness",
+    question: "What is your English proficiency level?",
+    options: {
+      A: "Fluent in academic and conversational use",
+      B: "Good, but need improvement in academic writing",
+      C: "Understandable but limited",
+      D: "Weak, needs strong improvement"
+    }
+  },
+  {
+    id: "Q4",
+    section: "Academic Readiness",
+    question: "Do you have exposure to research projects, internships, or presentations?",
+    options: {
+      A: "Strong experience",
+      B: "Some exposure", 
+      C: "Limited",
+      D: "None"
+    }
+  },
+  {
+    id: "Q5",
+    section: "Academic Readiness",
+    question: "How do you usually prepare for exams?",
+    options: {
+      A: "Planned, consistent schedule",
+      B: "Moderate preparation",
+      C: "Last-minute study",
+      D: "Unstructured, inconsistent"
+    }
+  },
+
+  // Section 2: Career & Goal Alignment (4 Questions)
+  {
+    id: "Q6", 
+    section: "Career & Goal Alignment",
+    question: "Do you have clear long-term career goals?",
+    options: {
+      A: "Very clear",
+      B: "Somewhat clear",
+      C: "Vague",
+      D: "No clarity"
+    }
+  },
+  {
+    id: "Q7",
+    section: "Career & Goal Alignment", 
+    question: "Is your intended course aligned with your career goals?",
+    options: {
+      A: "Strongly aligned",
+      B: "Somewhat aligned",
+      C: "Unclear",
+      D: "Not aligned"
+    }
+  },
+  {
+    id: "Q8",
+    section: "Career & Goal Alignment",
+    question: "Have you researched universities and rankings?",
+    options: {
+      A: "Extensively",
+      B: "Somewhat",
+      C: "Minimal", 
+      D: "Not at all"
+    }
+  },
+  {
+    id: "Q9",
+    section: "Career & Goal Alignment",
+    question: "What is your main motivation to study abroad?",
+    options: {
+      A: "Career growth/employability",
+      B: "Research/academic excellence",
+      C: "Lifestyle and exposure",
+      D: "Migration/settlement"
+    }
+  },
+
+  // Section 3: Financial Planning (4 Questions)
+  {
+    id: "Q10",
+    section: "Financial Planning",
+    question: "How prepared are you with tuition + living cost estimation?",
+    options: {
+      A: "Fully calculated",
+      B: "Partially calculated",
+      C: "Rough idea",
+      D: "No idea"
+    }
+  },
+  {
+    id: "Q11",
+    section: "Financial Planning",
+    question: "What is your primary funding source?",
+    options: {
+      A: "Family savings",
+      B: "Education loan", 
+      C: "Scholarship/grants",
+      D: "Not planned yet"
+    }
+  },
+  {
+    id: "Q12",
+    section: "Financial Planning",
+    question: "Do you have contingency/emergency funds planned?",
+    options: {
+      A: "Yes",
+      B: "Somewhat",
+      C: "Minimal",
+      D: "None"
+    }
+  },
+  {
+    id: "Q13",
+    section: "Financial Planning",
+    question: "How aware are you of scholarship opportunities?",
+    options: {
+      A: "Very aware",
+      B: "Somewhat aware",
+      C: "Slightly aware",
+      D: "Not aware"
+    }
+  },
+
+  // Section 4: Personal & Cultural Readiness (4 Questions)
+  {
+    id: "Q14",
+    section: "Personal & Cultural Readiness",
+    question: "How adaptable are you to new cultures and lifestyles?",
+    options: {
+      A: "Very adaptable",
+      B: "Adaptable",
+      C: "Somewhat adaptable", 
+      D: "Struggle to adapt"
+    }
+  },
+  {
+    id: "Q15",
+    section: "Personal & Cultural Readiness",
+    question: "How independent are you in daily living (cooking, budgeting, self-care)?",
+    options: {
+      A: "Fully independent",
+      B: "Mostly independent",
+      C: "Somewhat dependent",
+      D: "Dependent"
+    }
+  },
+  {
+    id: "Q16",
+    section: "Personal & Cultural Readiness",
+    question: "How comfortable are you interacting with people from diverse cultures?",
+    options: {
+      A: "Very comfortable",
+      B: "Comfortable",
+      C: "Somewhat comfortable",
+      D: "Uncomfortable"
+    }
+  },
+  {
+    id: "Q17",
+    section: "Personal & Cultural Readiness",
+    question: "How resilient are you in handling stress?",
+    options: {
+      A: "Very resilient",
+      B: "Moderately resilient",
+      C: "Sometimes struggle",
+      D: "Easily overwhelmed"
+    }
+  },
+
+  // Section 5: Practical Readiness (4 Questions)  
+  {
+    id: "Q18",
+    section: "Practical Readiness",
+    question: "How prepared are you with visa documentation?",
+    options: {
+      A: "Fully prepared",
+      B: "Somewhat",
+      C: "Minimal",
+      D: "Not prepared"
+    }
+  },
+  {
+    id: "Q19",
+    section: "Practical Readiness",
+    question: "How comfortable are you with digital/online tools?",
+    options: {
+      A: "Very comfortable",
+      B: "Comfortable", 
+      C: "Somewhat comfortable",
+      D: "Uncomfortable"
+    }
+  },
+  {
+    id: "Q20",
+    section: "Practical Readiness",
+    question: "Do you have valid health insurance/medical coverage plans?",
+    options: {
+      A: "Yes",
+      B: "Partially",
+      C: "Exploring",
+      D: "None"
+    }
+  },
+  {
+    id: "Q21",
+    section: "Practical Readiness",
+    question: "How good are you at meeting deadlines?",
+    options: {
+      A: "Excellent",
+      B: "Good",
+      C: "Fair",
+      D: "Poor"
+    }
+  },
+
+  // Section 6: Support System (4 Questions)
+  {
+    id: "Q22",
+    section: "Support System",
+    question: "Do your parents/family fully support your study abroad decision?",
+    options: {
+      A: "Strongly support",
+      B: "Support with concerns",
+      C: "Unsure",
+      D: "Do not support"
+    }
+  },
+  {
+    id: "Q23",
+    section: "Support System",
+    question: "How financially committed is your family?",
+    options: {
+      A: "Fully committed",
+      B: "Somewhat",
+      C: "Limited",
+      D: "Not committed"
+    }
+  },
+  {
+    id: "Q24", 
+    section: "Support System",
+    question: "How aligned are your parents' expectations with yours?",
+    options: {
+      A: "Strongly aligned",
+      B: "Somewhat aligned",
+      C: "Slightly aligned",
+      D: "Not aligned"
+    }
+  },
+  {
+    id: "Q25",
+    section: "Support System", 
+    question: "Have you openly discussed your goals with your parents?",
+    options: {
+      A: "Yes, extensively",
+      B: "Somewhat",
+      C: "Minimal",
+      D: "Not at all"
+    }
+  }
+];
+
+export default function ConciseSurvey() {
+  const [step, setStep] = useState<'info' | 'survey' | 'completed'>('info');
+  const [userInfo, setUserInfo] = useState<UserInfo>({ email: '', mobile: '' });
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [responses, setResponses] = useState<Response[]>([]);
+  const [currentAnswer, setCurrentAnswer] = useState<string>('');
+
+  const currentQuestion = conciseQuestions[currentQuestionIndex];
+  const progress = ((currentQuestionIndex + 1) / conciseQuestions.length) * 100;
+
+  const handleInfoSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (userInfo.email && userInfo.mobile) {
+      setStep('survey');
+    }
+  };
+
+  const handleAnswerSelect = (answer: string) => {
+    setCurrentAnswer(answer);
+  };
+
+  const handleNext = () => {
+    if (currentAnswer) {
+      const newResponse: Response = {
+        questionId: currentQuestion.id,
+        answer: currentAnswer,
+        section: currentQuestion.section
+      };
+
+      const updatedResponses = [...responses, newResponse];
+      setResponses(updatedResponses);
+
+      if (currentQuestionIndex < conciseQuestions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentAnswer('');
+      } else {
+        // Survey completed - save to localStorage
+        const surveyData = {
+          userInfo,
+          responses: updatedResponses,
+          completedAt: new Date().toISOString(),
+          testType: 'Concise Study Abroad Readiness Assessment'
+        };
+        
+        localStorage.setItem('conciseSurvey', JSON.stringify(surveyData));
+        setStep('completed');
+      }
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      // Find previous answer
+      const prevResponse = responses.find(r => r.questionId === conciseQuestions[currentQuestionIndex - 1].id);
+      setCurrentAnswer(prevResponse?.answer || '');
+      // Remove the current question's response if it exists
+      setResponses(responses.filter(r => r.questionId !== currentQuestion.id));
+    }
+  };
+
+  if (step === 'info') {
+    return (
+      <div className="max-w-md mx-auto mt-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+              Concise Study Abroad Assessment
+            </CardTitle>
+            <CardDescription className="text-center">
+              A focused 25-question readiness assessment (10-12 minutes)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleInfoSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your.email@example.com"
+                  value={userInfo.email}
+                  onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mobile">Mobile Number</Label>
+                <Input
+                  id="mobile"
+                  type="tel"
+                  placeholder="+91 XXXXX XXXXX"
+                  value={userInfo.mobile}
+                  onChange={(e) => setUserInfo({...userInfo, mobile: e.target.value})}
+                  required
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
+              >
+                Start Concise Assessment
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (step === 'completed') {
+    return (
+      <div className="max-w-2xl mx-auto mt-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                Concise Assessment Completed!
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Thank you for completing the Concise Study Abroad Readiness Assessment. Your responses have been saved.
+              </p>
+              <div className="bg-purple-50 dark:bg-purple-950/20 p-4 rounded-lg">
+                <p className="text-sm">
+                  <strong>Total Questions:</strong> {conciseQuestions.length}<br />
+                  <strong>Completed At:</strong> {new Date().toLocaleString()}<br />
+                  <strong>Email:</strong> {userInfo.email}<br />
+                  <strong>Assessment Type:</strong> Concise Track (25 Questions)
+                </p>
+              </div>
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
+              >
+                Take Another Assessment
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto mt-8 space-y-6">
+      {/* Progress Header */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">{currentQuestion.section}</h2>
+              <span className="text-sm text-muted-foreground">
+                {currentQuestionIndex + 1} of {conciseQuestions.length}
+              </span>
+            </div>
+            <Progress value={progress} className="w-full" />
+            <div className="text-center text-sm text-muted-foreground">
+              Concise Track • Estimated time: 10-12 minutes
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Question Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">
+            {currentQuestion.id}. {currentQuestion.question}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <RadioGroup value={currentAnswer} onValueChange={handleAnswerSelect}>
+            {Object.entries(currentQuestion.options).map(([key, value]) => (
+              <div key={key} className="flex items-center space-x-2 p-3 rounded-lg hover:bg-muted/50">
+                <RadioGroupItem value={key} id={`${currentQuestion.id}-${key}`} />
+                <Label 
+                  htmlFor={`${currentQuestion.id}-${key}`} 
+                  className="flex-1 cursor-pointer text-sm leading-relaxed"
+                >
+                  <span className="font-medium">{key})</span> {value}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      {/* Navigation */}
+      <div className="flex justify-between">
+        <Button 
+          onClick={handlePrevious}
+          disabled={currentQuestionIndex === 0}
+          variant="outline"
+        >
+          Previous
+        </Button>
+        <Button 
+          onClick={handleNext}
+          disabled={!currentAnswer}
+          className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
+        >
+          {currentQuestionIndex === conciseQuestions.length - 1 ? 'Complete Assessment' : 'Next'}
+        </Button>
+      </div>
+    </div>
+  );
+}

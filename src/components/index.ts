@@ -9,6 +9,9 @@ import SignInForm from "./auth/signin-form";
 import SignUpForm from "./auth/signup-form";
 
 import StudyAbroadSurvey from "./assessment/StudyAbroadSurvey";
+import ConciseSurvey from "./assessment/ConciseSurvey";
+import ExpandedSurvey from "./assessment/ExpandedSurvey";
+import UltraQuickSurvey from "./assessment/UltraQuickSurvey";
 
 import Hero from "./marketing/hero";
 import Navbar from "./marketing/navbar";
@@ -41,5 +44,8 @@ export {
     SignInForm,
     SignUpForm,
     StudyAbroadSurvey,
+    ConciseSurvey,
+    ExpandedSurvey,
+    UltraQuickSurvey,
     Providers,
 };

@@ -5,6 +5,9 @@ import { ArrowRight, BookOpen, Brain, Globe, GraduationCap } from "lucide-react"
 import Link from "next/link";
 import { useState } from "react";
 import StudyAbroadSurvey from "../assessment/StudyAbroadSurvey";
+import ConciseSurvey from "../assessment/ConciseSurvey";
+import ExpandedSurvey from "../assessment/ExpandedSurvey";
+import UltraQuickSurvey from "../assessment/UltraQuickSurvey";
 import { Button } from "../ui/button";
 import { CardSpotlight } from "../ui/card-spotlight";
 import { LampContainer } from "../ui/lamp";
@@ -23,6 +26,9 @@ const CTASection = ({
   className 
 }: CTASectionProps) => {
   const [showAssessment, setShowAssessment] = useState(false);
+  const [showConciseSurvey, setShowConciseSurvey] = useState(false);
+  const [showExpandedSurvey, setShowExpandedSurvey] = useState(false);
+  const [showUltraQuickSurvey, setShowUltraQuickSurvey] = useState(false);
 
   return (
     <div id="services">
@@ -42,54 +48,105 @@ const CTASection = ({
           {title}
         </h1>
         
-        {!showAssessment ? (
+        {!showAssessment && !showConciseSurvey && !showExpandedSurvey && !showUltraQuickSurvey ? (
           <>
             {/* Test Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 w-full max-w-6xl">
               <TestCard 
-                title="IELTS Preparation"
-                description="Comprehensive IELTS test preparation with proven strategies and practice tests."
-                icon={<BookOpen className="w-8 h-8 text-purple-400" />}
-                testType="ielts"
-                onAssessmentClick={setShowAssessment}
-              />
-              <TestCard 
                 title="Study Abroad Assessment"
                 description="Complete 54-question assessment to evaluate your study abroad readiness."
-                icon={<Brain className="w-8 h-8 text-purple-400" />}
+                icon={<BookOpen className="w-8 h-8 text-purple-400" />}
                 testType="assessment"
                 onAssessmentClick={setShowAssessment}
+                onConciseClick={setShowConciseSurvey}
+                onExpandedClick={setShowExpandedSurvey}
+                onUltraQuickClick={setShowUltraQuickSurvey}
               />
               <TestCard 
-                title="Study Abroad Guidance"
-                description="Complete guidance for students planning to study overseas."
+                title="Expanded Assessment"
+                description="Detailed 42-question assessment covering all categories (15-20 minutes)."
+                icon={<Brain className="w-8 h-8 text-purple-400" />}
+                testType="expanded"
+                onAssessmentClick={setShowAssessment}
+                onConciseClick={setShowConciseSurvey}
+                onExpandedClick={setShowExpandedSurvey}
+                onUltraQuickClick={setShowUltraQuickSurvey}
+              />
+              <TestCard 
+                title="Study Assessment"
+                description="A focused 25-question readiness assessment"
                 icon={<Globe className="w-8 h-8 text-purple-400" />}
-                testType="guidance"
+                testType="concise"
                 onAssessmentClick={setShowAssessment}
+                onConciseClick={setShowConciseSurvey}
+                onExpandedClick={setShowExpandedSurvey}
+                onUltraQuickClick={setShowUltraQuickSurvey}
               />
               <TestCard 
-                title="Academic Counseling"
-                description="Expert advice on course selection and academic planning."
+                title="Ultra-Quick Assessment"
+                description="Fast snapshot check - 12 questions covering all categories (3-5 minutes)."
                 icon={<GraduationCap className="w-8 h-8 text-purple-400" />}
-                testType="counseling"
+                testType="ultraquick"
                 onAssessmentClick={setShowAssessment}
+                onConciseClick={setShowConciseSurvey}
+                onExpandedClick={setShowExpandedSurvey}
+                onUltraQuickClick={setShowUltraQuickSurvey}
               />
             </div>
             
 
           </>
-        ) : (
+        ) : showAssessment ? (
           <div className="mt-12 w-full max-w-6xl">
-            <div className="mb-8 text-center">
+            <StudyAbroadSurvey />
+            <div className="mt-8 text-center">
               <Button 
                 onClick={() => setShowAssessment(false)}
                 variant="outline"
-                className="mb-4"
+                className="mt-4"
               >
                 ← Back to Tests
               </Button>
             </div>
-            <StudyAbroadSurvey />
+          </div>
+        ) : showConciseSurvey ? (
+          <div className="mt-12 w-full max-w-6xl">
+            <ConciseSurvey />
+            <div className="mt-8 text-center">
+              <Button 
+                onClick={() => setShowConciseSurvey(false)}
+                variant="outline"
+                className="mt-4"
+              >
+                ← Back to Tests
+              </Button>
+            </div>
+          </div>
+        ) : showExpandedSurvey ? (
+          <div className="mt-12 w-full max-w-6xl">
+            <ExpandedSurvey />
+            <div className="mt-8 text-center">
+              <Button 
+                onClick={() => setShowExpandedSurvey(false)}
+                variant="outline"
+                className="mt-4"
+              >
+                ← Back to Tests
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-12 w-full max-w-6xl">
+            <UltraQuickSurvey />
+            <div className="mt-8 text-center">
+              <Button 
+                onClick={() => setShowUltraQuickSurvey(false)}
+                variant="outline"
+                className="mt-4"
+              >
+                ← Back to Tests
+              </Button>
+            </div>
           </div>
         )}
       </motion.div>
@@ -104,13 +161,19 @@ const TestCard = ({
   description, 
   icon, 
   testType,
-  onAssessmentClick
+  onAssessmentClick,
+  onConciseClick,
+  onExpandedClick,
+  onUltraQuickClick
 }: { 
   title: string; 
   description: string; 
   icon: React.ReactNode;
   testType: string;
   onAssessmentClick?: (show: boolean) => void;
+  onConciseClick?: (show: boolean) => void;
+  onExpandedClick?: (show: boolean) => void;
+  onUltraQuickClick?: (show: boolean) => void;
 }) => {
   return (
     <CardSpotlight className="h-96 w-full">
@@ -131,6 +194,33 @@ const TestCard = ({
           {testType === 'assessment' ? (
             <Button 
               onClick={() => onAssessmentClick?.(true)}
+              size="sm"
+              className="w-full bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white font-medium rounded-lg transition-all duration-200"
+            >
+              Take Test
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          ) : testType === 'concise' ? (
+            <Button 
+              onClick={() => onConciseClick?.(true)}
+              size="sm"
+              className="w-full bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white font-medium rounded-lg transition-all duration-200"
+            >
+              Take Test
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          ) : testType === 'expanded' ? (
+            <Button 
+              onClick={() => onExpandedClick?.(true)}
+              size="sm"
+              className="w-full bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white font-medium rounded-lg transition-all duration-200"
+            >
+              Take Test
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          ) : testType === 'ultraquick' ? (
+            <Button 
+              onClick={() => onUltraQuickClick?.(true)}
               size="sm"
               className="w-full bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-500 hover:to-violet-600 text-white font-medium rounded-lg transition-all duration-200"
             >

@@ -55,7 +55,7 @@ const TypewriterEffect = () => {
 
 const YouTubeVideoPlayer = () => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const videoId = "LsntzoOotpQ"; // Extracted from the YouTube URL
+    const videoId = "6WFdYcyOlPc"; // Extracted from the YouTube URL
     
     const togglePlay = () => {
         setIsPlaying(!isPlaying);
