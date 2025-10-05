@@ -11,7 +11,7 @@ D-Vivid Consultant is a comprehensive study abroad consultancy website designed 
 
 ## 🚀 Features
 
-### � **Student Services**
+### 🎓 **Student Services**
 - **University Guidance**: Expert advice on selecting the right international universities
 - **Visa Assistance**: Complete visa application support and documentation
 - **Scholarship Support**: Help finding and applying for international scholarships  
@@ -25,7 +25,7 @@ D-Vivid Consultant is a comprehensive study abroad consultancy website designed 
 - **Smooth Scrolling**: Seamless navigation between sections
 - **Typewriter Effects**: Engaging text animations in hero sections
 
-### � **Authentication & Security**
+### 🔐 **Authentication & Security**
 - **Clerk Integration**: Secure user authentication and management
 - **Protected Routes**: Secure access to consultation dashboards
 - **User Profiles**: Personalized student dashboards
@@ -40,7 +40,7 @@ D-Vivid Consultant is a comprehensive study abroad consultancy website designed 
 
 Check out the live D-Vivid Consultant website: [Live Preview](https://d-vivid-consultant.vercel.app)
 
-## � Office Locations
+## 📍 Office Locations
 
 ### 📍 **Ahmedabad Office**
 - **Address**: 123 Business Hub, Ahmedabad, Gujarat 380001
@@ -92,8 +92,8 @@ Check out the live D-Vivid Consultant website: [Live Preview](https://d-vivid-co
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/harshsingh6103/D-Vivid-Consultant.git
-    cd D-Vivid-Consultant
+    git clone https://github.com/Rohantimoney/Study-Abroad.git
+    cd Study-Abroad
     ```
 
 2. **Install dependencies:**
@@ -158,7 +158,7 @@ Check out the live D-Vivid Consultant website: [Live Preview](https://d-vivid-co
 3. **Add environment variables in Vercel dashboard**
 4. **Deploy with one click**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/harshsingh6103/D-Vivid-Consultant)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Rohantimoney/Study-Abroad)
 
 ### **Environment Variables for Production**
 Make sure to set these in your Vercel dashboard:
@@ -171,7 +171,7 @@ Make sure to set these in your Vercel dashboard:
 ## 📁 Project Structure
 
 ```
-D-Vivid-Consultant/
+Study-Abroad/
 ├── src/
 │   ├── app/
 │   │   ├── (main)/           # Main application pages
@@ -247,8 +247,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - **Phone**: +91 98765 43210
 
 ### **Developer**
-- **GitHub**: [harshsingh6103](https://github.com/harshsingh6103)
-- **Issues**: [GitHub Issues](https://github.com/harshsingh6103/D-Vivid-Consultant/issues)
+- **GitHub**: [Rohantimoney](https://github.com/Rohantimoney)
+- **Issues**: [GitHub Issues](https://github.com/Rohantimoney/Study-Abroad/issues)
 
 ---
 
