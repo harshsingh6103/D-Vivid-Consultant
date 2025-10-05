@@ -55,6 +55,12 @@ export async function POST(request: NextRequest) {
     const studentData: StudentData = await request.json()
     console.log('📥 Received student data:', JSON.stringify(studentData, null, 2));
     
+    // Validate required fields
+    if (!studentData.userName || typeof studentData.overallScore !== 'number') {
+      console.error('❌ Invalid student data received')
+      return NextResponse.json({ error: 'Invalid student data' }, { status: 400 })
+    }
+    
     // Check if API key is available
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {

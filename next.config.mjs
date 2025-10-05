@@ -11,6 +11,9 @@ const nextConfig = {
                 hostname: "iili.io"
             }
         ]
+    },
+    experimental: {
+        serverComponentsExternalPackages: ['puppeteer']
     }
 };
 
