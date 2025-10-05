@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
     console.log('📥 Received student data:', JSON.stringify(studentData, null, 2));
     
     // Validate required fields
-    if (!studentData.userName || typeof studentData.overallScore !== 'number') {
-      console.error('❌ Invalid student data received')
-      return NextResponse.json({ error: 'Invalid student data' }, { status: 400 })
+    if (!studentData.userName) {
+      console.error('❌ Missing userName in student data')
+      return NextResponse.json({ error: 'Missing user name' }, { status: 400 })
     }
     
     // Check if API key is available
