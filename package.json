@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^5.3.3",
+    "@clerk/nextjs": "^5.7.5",
     "@clerk/types": "^4.14.0",
     "@headlessui/react": "^2.1.2",
     "@hookform/resolvers": "^3.9.0",
@@ -36,6 +36,9 @@
     "mini-svg-data-uri": "^1.4.4",
     "next": "14.2.6",
     "next-themes": "^0.3.0",
+    "openai": "^6.1.0",
+    "pu": "^0.1.0",
+    "puppeteer": "^24.23.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",

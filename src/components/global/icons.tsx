@@ -32,10 +32,10 @@ const Icons: IconType = {
             <rect x="0" y="52" width="70" height="3" fill="currentColor"/>
             
             {/* D-VIVID text */}
-            <text x="80" y="35" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="currentColor">D-VIVID</text>
+            <text x="80" y="35" fontFamily="Arial, sans-serif" fontSize="28" fontWeight="bold" fill="currentColor">D-VIVID</text>
             
             {/* CONSULTANT text */}
-            <text x="80" y="55" font-family="Arial, sans-serif" font-size="16" font-weight="normal" fill="currentColor" opacity="0.8">CONSULTANT</text>
+            <text x="80" y="55" fontFamily="Arial, sans-serif" fontSize="16" fontWeight="normal" fill="currentColor" opacity="0.8">CONSULTANT</text>
         </svg>
     ),
     stars: (props: LucideProps) => (
@@ -43,7 +43,7 @@ const Icons: IconType = {
     ),
     menu: (props: LucideProps) => (
         <svg {...props} width="16" height="10" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 9H15M1 1H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M1 9H15M1 1H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     ),
     google: (props: LucideProps) => (

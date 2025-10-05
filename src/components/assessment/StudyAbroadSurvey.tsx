@@ -640,12 +640,51 @@ const surveyQuestions: Question[] = [
   }
 ];
 
+// Scoring function to calculate results
+const calculateScores = (responses: Response[]) => {
+  const sectionScores: { [key: string]: { correct: number; total: number } } = {};
+  
+  // Initialize section scores
+  const sections = ['Academic Readiness', 'Cultural Adaptability', 'Career Clarity', 'Study Abroad Readiness', 'Support System'];
+  sections.forEach(section => {
+    sectionScores[section] = { correct: 0, total: 0 };
+  });
+  
+  // Calculate scores based on responses
+  responses.forEach(response => {
+    const section = response.section;
+    if (sectionScores[section]) {
+      sectionScores[section].total += 1;
+      
+      // Score based on answer choice (A=4, B=3, C=2, D=1)
+      const answerScore = response.answer === 'A' ? 4 : response.answer === 'B' ? 3 : response.answer === 'C' ? 2 : 1;
+      sectionScores[section].correct += answerScore;
+    }
+  });
+  
+  // Convert to percentage scores
+  const topicScores = Object.entries(sectionScores).map(([section, scores]) => ({
+    name: section,
+    correct: Math.round((scores.correct / (scores.total * 4)) * 100), // Convert to percentage
+    total: 100
+  }));
+  
+  // Calculate overall score
+  const overallScore = Math.round(topicScores.reduce((sum, topic) => sum + topic.correct, 0) / topicScores.length);
+  
+  return {
+    overallScore,
+    topicScores
+  };
+};
+
 export default function StudyAbroadSurvey() {
-  const [step, setStep] = useState<'info' | 'survey' | 'completed'>('info');
+  const [step, setStep] = useState<'info' | 'survey' | 'processing' | 'completed'>('info');
   const [userInfo, setUserInfo] = useState<UserInfo>({ email: '', mobile: '' });
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Response[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string>('');
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
 
   const currentQuestion = surveyQuestions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / surveyQuestions.length) * 100;
@@ -661,7 +700,7 @@ export default function StudyAbroadSurvey() {
     setCurrentAnswer(answer);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentAnswer) {
       const newResponse: Response = {
         questionId: currentQuestion.id,
@@ -676,28 +715,80 @@ export default function StudyAbroadSurvey() {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setCurrentAnswer('');
       } else {
-        // Survey completed - save to localStorage
-        const surveyData = {
-          userInfo,
-          responses: updatedResponses,
-          completedAt: new Date().toISOString(),
-          testType: 'Study Abroad Readiness Assessment'
-        };
-        
-        localStorage.setItem('studyAbroadSurvey', JSON.stringify(surveyData));
-        setStep('completed');
+        // Survey completed - process with our backend
+        try {
+          setStep('processing'); // Add processing state
+          
+          // Calculate scores based on responses
+          const scores = calculateScores(updatedResponses);
+          
+          // Call our analyze-results API
+          const analysisResponse = await fetch('/api/analyze-results', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userName: userInfo.email.split('@')[0], // Use email prefix as name
+              overallScore: scores.overallScore,
+              topicScoresArray: scores.topicScores
+            })
+          });
+
+          if (!analysisResponse.ok) {
+            throw new Error('Analysis failed');
+          }
+
+          const analysisResults = await analysisResponse.json();
+          
+          // Save results to localStorage for PDF generation
+          const surveyData = {
+            userInfo,
+            responses: updatedResponses,
+            completedAt: new Date().toISOString(),
+            testType: 'Study Abroad Readiness Assessment',
+            analysisResults
+          };
+          
+          localStorage.setItem('studyAbroadSurvey', JSON.stringify(surveyData));
+          setStep('completed');
+        } catch (error) {
+          console.error('Error processing assessment:', error);
+          // Fallback to basic completion
+          const surveyData = {
+            userInfo,
+            responses: updatedResponses,
+            completedAt: new Date().toISOString(),
+            testType: 'Study Abroad Readiness Assessment'
+          };
+          
+          localStorage.setItem('studyAbroadSurvey', JSON.stringify(surveyData));
+          setStep('completed');
+        }
       }
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
+      // Save current answer if it exists
+      if (currentAnswer) {
+        const currentResponse: Response = {
+          questionId: currentQuestion.id,
+          answer: currentAnswer,
+          section: currentQuestion.section
+        };
+        
+        // Update or add the current response
+        const updatedResponses = responses.filter(r => r.questionId !== currentQuestion.id);
+        updatedResponses.push(currentResponse);
+        setResponses(updatedResponses);
+      }
+      
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       // Find previous answer
       const prevResponse = responses.find(r => r.questionId === surveyQuestions[currentQuestionIndex - 1].id);
       setCurrentAnswer(prevResponse?.answer || '');
-      // Remove the current question's response if it exists
-      setResponses(responses.filter(r => r.questionId !== currentQuestion.id));
     }
   };
 
@@ -750,9 +841,93 @@ export default function StudyAbroadSurvey() {
     );
   }
 
-  if (step === 'completed') {
+  if (step === 'processing') {
     return (
       <div className="max-w-2xl mx-auto mt-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                Analyzing Your Responses
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Our AI is processing your assessment and generating personalized insights...
+              </p>
+              <div className="bg-purple-50 dark:bg-purple-950/20 p-4 rounded-lg">
+                <p className="text-sm">
+                  This may take a few moments. Please don't close this page.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (step === 'completed') {
+    const handleDownloadPDF = async () => {
+      if (isDownloadingPDF) return; // Prevent multiple clicks
+      
+      setIsDownloadingPDF(true);
+      try {
+        const surveyData = JSON.parse(localStorage.getItem('studyAbroadSurvey') || '{}');
+        if (surveyData.analysisResults) {
+          console.log('🔄 Starting PDF generation...');
+          const response = await fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(surveyData.analysisResults)
+          });
+
+          if (response.ok) {
+            console.log('✅ PDF generated successfully');
+            const blob = await response.blob();
+            
+            // Check if blob has content
+            if (blob.size === 0) {
+              console.error('❌ PDF blob is empty');
+              alert('PDF generation failed. Please try again.');
+              return;
+            }
+            
+            console.log('📄 PDF blob size:', blob.size, 'bytes');
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `study-abroad-report-${userInfo.email.split('@')[0]}.pdf`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up after a delay
+            setTimeout(() => {
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+            }, 1000);
+            
+            console.log('✅ PDF download initiated');
+          } else {
+            console.error('❌ PDF generation failed:', response.status);
+            alert('PDF generation failed. Please try again.');
+          }
+        } else {
+          console.error('❌ No analysis results found');
+          alert('No analysis results found. Please complete the assessment again.');
+        }
+      } catch (error) {
+        console.error('❌ Error downloading PDF:', error);
+        alert('Error downloading PDF. Please try again.');
+      } finally {
+        setIsDownloadingPDF(false);
+      }
+    };
+
+    return (
+      <div className="max-w-4xl mx-auto mt-8 space-y-6">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
@@ -761,7 +936,7 @@ export default function StudyAbroadSurvey() {
                 Assessment Completed!
               </h2>
               <p className="text-lg text-muted-foreground">
-                Thank you for completing the Study Abroad Readiness Assessment. Your responses have been saved.
+                Your personalized study abroad readiness report is ready.
               </p>
               <div className="bg-purple-50 dark:bg-purple-950/20 p-4 rounded-lg">
                 <p className="text-sm">
@@ -770,12 +945,28 @@ export default function StudyAbroadSurvey() {
                   <strong>Email:</strong> {userInfo.email}
                 </p>
               </div>
-              <Button 
-                onClick={() => window.location.reload()} 
-                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
-              >
-                Take Another Assessment
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloadingPDF}
+                  className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 ${isDownloadingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {isDownloadingPDF ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Generating PDF...
+                    </>
+                  ) : (
+                    '📄 Download Detailed Report'
+                  )}
+                </Button>
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
+                >
+                  Take Another Assessment
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
