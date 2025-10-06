@@ -12,40 +12,79 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing student name' }, { status: 400 })
     }
     
+    // Simple browser configuration
     const browser = await puppeteer.launch({
       headless: 'new',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
         '--disable-gpu'
-      ]
+      ],
+      timeout: 30000
     })
     
     const page = await browser.newPage()
+    
+    // Set page timeout
+    page.setDefaultTimeout(30000) // 30 second timeout
+    page.setDefaultNavigationTimeout(30000)
     
     // Generate HTML content for the PDF
     const htmlContent = generateHTMLContent(results)
     console.log('📄 Generated HTML content length:', htmlContent.length)
     
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
+    await page.setContent(htmlContent, { 
+      waitUntil: 'domcontentloaded',
+      timeout: 30000 
+    })
     console.log('📄 Page content loaded successfully')
     
-    // Generate PDF
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '20mm',
-        right: '15mm',
-        bottom: '20mm',
-        left: '15mm'
-      }
-    })
+    // Wait for any dynamic content to load
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    
+    // Generate PDF with error handling
+    let pdfBuffer: Buffer;
+    try {
+      pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '15mm',
+          bottom: '20mm',
+          left: '15mm'
+        },
+        timeout: 30000 // 30 second timeout for PDF generation
+      })
+    } catch (pdfError) {
+      console.error('❌ PDF generation failed:', pdfError);
+      await browser.close();
+      
+      // Return a simple text response as fallback
+      return new NextResponse(`
+        <html>
+          <head><title>Study Abroad Report - ${results.studentName}</title></head>
+          <body style="font-family: Arial, sans-serif; padding: 20px;">
+            <h1>Study Abroad Readiness Report</h1>
+            <h2>Student: ${results.studentName}</h2>
+            <p><strong>Assessment Type:</strong> ${results.testType || 'Study Abroad Readiness'}</p>
+            <p><strong>Overall Score:</strong> ${results.score || 'N/A'}/100</p>
+            <p><strong>Readiness Band:</strong> ${results.analysis?.readinessBand || 'Needs Assessment'}</p>
+            <h3>Recommendations:</h3>
+            <ul>
+              ${results.analysis?.specificRecommendations?.map(rec => `<li>${rec}</li>`).join('') || '<li>Complete assessment for personalized recommendations</li>'}
+            </ul>
+            <p><em>Note: This is a simplified report. For detailed analysis, please retry PDF generation.</em></p>
+          </body>
+        </html>
+      `, {
+        headers: {
+          'Content-Type': 'text/html',
+          'Content-Disposition': `attachment; filename="study-abroad-report-${results.studentName.replace(/\s+/g, '-').toLowerCase()}.html"`
+        }
+      });
+    }
     
     console.log('📄 PDF generated, buffer size:', pdfBuffer.length)
     
@@ -492,7 +531,7 @@ function generateHTMLContent(results: any): string {
                 <div class="section-content">
                     <div class="chart-container">
                         <div class="chart-title">Academic Performance Breakdown</div>
-                        ${results.topics.map((topic: any) => {
+                        ${results.topics && results.topics.length > 0 ? results.topics.map((topic: any) => {
                             const percentage = Math.round((topic.correct / topic.total) * 100);
                             const barClass = percentage >= 80 ? 'excellent' : percentage >= 60 ? 'good' : percentage >= 40 ? 'average' : 'weak';
                             return `
@@ -505,24 +544,24 @@ function generateHTMLContent(results: any): string {
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+                        }).join('') : '<p>No topic data available</p>'}
                     </div>
                     
                     <div class="chart-container">
                         <div class="chart-title">Skills Assessment Overview</div>
                         <div class="radar-chart">
-                            ${results.skills.map((skill: any) => `
+                            ${results.skills && results.skills.length > 0 ? results.skills.map((skill: any) => `
                                 <div class="radar-item">
                                     <div class="radar-score">${skill.score}%</div>
                                     <div class="radar-label">${skill.name}</div>
                                 </div>
-                            `).join('')}
+                            `).join('') : '<p>No skills data available</p>'}
                         </div>
                     </div>
                     
                     <div class="chart-container">
                         <div class="chart-title">Career Interest Alignment</div>
-                        ${results.careerInterests.map((interest: any) => {
+                        ${results.careerInterests && results.careerInterests.length > 0 ? results.careerInterests.map((interest: any) => {
                             const percentage = Math.round((interest.score / 10) * 100);
                             const barClass = percentage >= 80 ? 'excellent' : percentage >= 60 ? 'good' : percentage >= 40 ? 'average' : 'weak';
                             return `
@@ -535,7 +574,7 @@ function generateHTMLContent(results: any): string {
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+                        }).join('') : '<p>No career interests data available</p>'}
                     </div>
                 </div>
             </div>

@@ -179,11 +179,12 @@ const ultraQuickQuestions: Question[] = [
 ];
 
 export default function UltraQuickSurvey() {
-  const [step, setStep] = useState<'info' | 'survey' | 'completed'>('info');
+  const [step, setStep] = useState<'info' | 'survey' | 'processing' | 'completed'>('info');
   const [userInfo, setUserInfo] = useState<UserInfo>({ email: '', mobile: '' });
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Response[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string>('');
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
 
   const currentQuestion = ultraQuickQuestions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / ultraQuickQuestions.length) * 100;
@@ -195,11 +196,39 @@ export default function UltraQuickSurvey() {
     }
   };
 
+  const calculateScores = (responses: Response[]) => {
+    const topicScores: { [key: string]: { correct: number; total: number } } = {};
+    
+    responses.forEach(response => {
+      if (!topicScores[response.section]) {
+        topicScores[response.section] = { correct: 0, total: 0 };
+      }
+      topicScores[response.section].total++;
+      topicScores[response.section].correct++;
+    });
+
+    const topicScoresArray = Object.entries(topicScores).map(([name, scores]) => ({
+      name,
+      correct: scores.correct,
+      total: scores.total
+    }));
+
+    const overallScore = topicScoresArray.length > 0 
+      ? Math.round(topicScoresArray.reduce((sum, topic) => sum + (topic.correct / topic.total) * 100, 0) / topicScoresArray.length)
+      : 0;
+
+    return {
+      userName: userInfo.email.split('@')[0],
+      overallScore,
+      topicScoresArray
+    };
+  };
+
   const handleAnswerSelect = (answer: string) => {
     setCurrentAnswer(answer);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentAnswer) {
       const newResponse: Response = {
         questionId: currentQuestion.id,
@@ -214,16 +243,56 @@ export default function UltraQuickSurvey() {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setCurrentAnswer('');
       } else {
-        // Survey completed - save to localStorage
-        const surveyData = {
-          userInfo,
-          responses: updatedResponses,
-          completedAt: new Date().toISOString(),
-          testType: 'Ultra-Quick Study Abroad Readiness Assessment'
-        };
+        setStep('processing');
         
-        localStorage.setItem('ultraQuickSurvey', JSON.stringify(surveyData));
-        setStep('completed');
+        try {
+          const studentData = calculateScores(updatedResponses);
+          console.log('🔄 Calling LLM analysis for Ultra Quick Survey...');
+          
+          const response = await fetch('/api/analyze-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(studentData)
+          });
+
+          if (response.ok) {
+            const analysisResults = await response.json();
+            console.log('✅ LLM analysis successful for Ultra Quick Survey');
+            
+            const surveyData = {
+              userInfo,
+              responses: updatedResponses,
+              completedAt: new Date().toISOString(),
+              testType: 'Quick Check Study Abroad Readiness Assessment',
+              analysisResults
+            };
+            
+            localStorage.setItem('ultraQuickSurvey', JSON.stringify(surveyData));
+            setStep('completed');
+          } else {
+            console.error('❌ LLM analysis failed for Ultra Quick Survey');
+            const surveyData = {
+              userInfo,
+              responses: updatedResponses,
+              completedAt: new Date().toISOString(),
+              testType: 'Quick Check Study Abroad Readiness Assessment'
+            };
+            
+            localStorage.setItem('ultraQuickSurvey', JSON.stringify(surveyData));
+            setStep('completed');
+          }
+        } catch (error) {
+          console.error('❌ Error in Ultra Quick Survey analysis:', error);
+          const surveyData = {
+            userInfo,
+            responses: updatedResponses,
+            completedAt: new Date().toISOString(),
+            testType: 'Quick Check Study Abroad Readiness Assessment'
+          };
+          
+          localStorage.setItem('ultraQuickSurvey', JSON.stringify(surveyData));
+          setStep('completed');
+        }
       }
     }
   };
@@ -288,34 +357,126 @@ export default function UltraQuickSurvey() {
     );
   }
 
-  if (step === 'completed') {
+  if (step === 'processing') {
     return (
       <div className="max-w-2xl mx-auto mt-8">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
-              <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
               <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
-                Ultra-Quick Assessment Completed!
+                Analyzing Your Quick Check...
               </h2>
               <p className="text-lg text-muted-foreground">
-                Thank you for completing the Ultra-Quick Study Abroad Readiness Assessment. Your snapshot has been saved.
+                Our AI is analyzing your quick assessment responses to generate personalized insights.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (step === 'completed') {
+    const handleDownloadPDF = async () => {
+      if (isDownloadingPDF) return;
+      
+      setIsDownloadingPDF(true);
+      try {
+        const surveyData = JSON.parse(localStorage.getItem('ultraQuickSurvey') || '{}');
+        if (surveyData.analysisResults) {
+          console.log('🔄 Starting PDF generation for Ultra Quick Survey...');
+          const response = await fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(surveyData.analysisResults)
+          });
+
+          if (response.ok) {
+            console.log('✅ PDF generated successfully for Ultra Quick Survey');
+            const blob = await response.blob();
+            
+            if (blob.size === 0) {
+              console.error('❌ PDF blob is empty');
+              alert('PDF generation failed. Please try again.');
+              return;
+            }
+            
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `quick-check-study-abroad-report-${userInfo.email.split('@')[0]}.pdf`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            
+            setTimeout(() => {
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+            }, 1000);
+            
+            console.log('✅ PDF download initiated for Ultra Quick Survey');
+          } else {
+            console.error('❌ PDF generation failed:', response.status);
+            alert('PDF generation failed. Please try again.');
+          }
+        } else {
+          console.error('❌ No analysis results found for Ultra Quick Survey');
+          alert('No analysis results found. Please complete the assessment again.');
+        }
+      } catch (error) {
+        console.error('❌ Error downloading PDF for Ultra Quick Survey:', error);
+        alert('Error downloading PDF. Please try again.');
+      } finally {
+        setIsDownloadingPDF(false);
+      }
+    };
+
+    return (
+      <div className="max-w-4xl mx-auto mt-8 space-y-6">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                Quick Check Completed!
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Thank you for completing the Quick Check Study Abroad Readiness Assessment. Your AI-powered analysis is ready!
               </p>
               <div className="bg-purple-50 dark:bg-purple-950/20 p-4 rounded-lg">
                 <p className="text-sm">
                   <strong>Total Questions:</strong> {ultraQuickQuestions.length}<br />
                   <strong>Completed At:</strong> {new Date().toLocaleString()}<br />
                   <strong>Email:</strong> {userInfo.email}<br />
-                  <strong>Assessment Type:</strong> Ultra-Quick Track (12 Questions)<br />
-                  <strong>Readiness Score:</strong> Snapshot generated ✓
+                  <strong>Assessment Type:</strong> Quick Check (12 Questions)
                 </p>
               </div>
-              <Button 
-                onClick={() => window.location.reload()} 
-                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
-              >
-                Take Another Assessment
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloadingPDF}
+                  className={`bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 ${isDownloadingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {isDownloadingPDF ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Generating PDF...
+                    </>
+                  ) : (
+                    '📄 Download Detailed Report'
+                  )}
+                </Button>
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  variant="outline"
+                  className="border-purple-600 text-purple-600 hover:bg-purple-50"
+                >
+                  Take Another Assessment
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

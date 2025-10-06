@@ -322,11 +322,12 @@ const conciseQuestions: Question[] = [
 ];
 
 export default function ConciseSurvey() {
-  const [step, setStep] = useState<'info' | 'survey' | 'completed'>('info');
+  const [step, setStep] = useState<'info' | 'survey' | 'processing' | 'completed'>('info');
   const [userInfo, setUserInfo] = useState<UserInfo>({ email: '', mobile: '' });
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Response[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string>('');
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
 
   const currentQuestion = conciseQuestions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / conciseQuestions.length) * 100;
@@ -338,11 +339,39 @@ export default function ConciseSurvey() {
     }
   };
 
+  const calculateScores = (responses: Response[]) => {
+    const topicScores: { [key: string]: { correct: number; total: number } } = {};
+    
+    responses.forEach(response => {
+      if (!topicScores[response.section]) {
+        topicScores[response.section] = { correct: 0, total: 0 };
+      }
+      topicScores[response.section].total++;
+      topicScores[response.section].correct++;
+    });
+
+    const topicScoresArray = Object.entries(topicScores).map(([name, scores]) => ({
+      name,
+      correct: scores.correct,
+      total: scores.total
+    }));
+
+    const overallScore = topicScoresArray.length > 0 
+      ? Math.round(topicScoresArray.reduce((sum, topic) => sum + (topic.correct / topic.total) * 100, 0) / topicScoresArray.length)
+      : 0;
+
+    return {
+      userName: userInfo.email.split('@')[0],
+      overallScore,
+      topicScoresArray
+    };
+  };
+
   const handleAnswerSelect = (answer: string) => {
     setCurrentAnswer(answer);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentAnswer) {
       const newResponse: Response = {
         questionId: currentQuestion.id,
@@ -357,16 +386,56 @@ export default function ConciseSurvey() {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setCurrentAnswer('');
       } else {
-        // Survey completed - save to localStorage
-        const surveyData = {
-          userInfo,
-          responses: updatedResponses,
-          completedAt: new Date().toISOString(),
-          testType: 'Concise Study Abroad Readiness Assessment'
-        };
+        setStep('processing');
         
-        localStorage.setItem('conciseSurvey', JSON.stringify(surveyData));
-        setStep('completed');
+        try {
+          const studentData = calculateScores(updatedResponses);
+          console.log('🔄 Calling LLM analysis for Concise Survey...');
+          
+          const response = await fetch('/api/analyze-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(studentData)
+          });
+
+          if (response.ok) {
+            const analysisResults = await response.json();
+            console.log('✅ LLM analysis successful for Concise Survey');
+            
+            const surveyData = {
+              userInfo,
+              responses: updatedResponses,
+              completedAt: new Date().toISOString(),
+              testType: 'Focused Study Abroad Readiness Assessment',
+              analysisResults
+            };
+            
+            localStorage.setItem('conciseSurvey', JSON.stringify(surveyData));
+            setStep('completed');
+          } else {
+            console.error('❌ LLM analysis failed for Concise Survey');
+            const surveyData = {
+              userInfo,
+              responses: updatedResponses,
+              completedAt: new Date().toISOString(),
+              testType: 'Focused Study Abroad Readiness Assessment'
+            };
+            
+            localStorage.setItem('conciseSurvey', JSON.stringify(surveyData));
+            setStep('completed');
+          }
+        } catch (error) {
+          console.error('❌ Error in Concise Survey analysis:', error);
+          const surveyData = {
+            userInfo,
+            responses: updatedResponses,
+            completedAt: new Date().toISOString(),
+            testType: 'Focused Study Abroad Readiness Assessment'
+          };
+          
+          localStorage.setItem('conciseSurvey', JSON.stringify(surveyData));
+          setStep('completed');
+        }
       }
     }
   };

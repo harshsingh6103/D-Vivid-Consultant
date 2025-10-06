@@ -128,10 +128,9 @@ Generate comprehensive JSON report focusing on study abroad readiness.`
       // Try multiple fast models in sequence with timeout
       const models = [
         "meta-llama/llama-3.2-3b-instruct:free",
-        "microsoft/phi-3-mini-128k-instruct:free",
         "google/gemma-2-2b-it:free",
         "meta-llama/llama-3.1-8b-instruct:free",
-        "microsoft/phi-3-mini-4k-instruct:free"
+        "microsoft/phi-3-mini-128k-instruct:free"
       ];
       
       let completion: any = null;

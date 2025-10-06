@@ -509,11 +509,12 @@ const expandedQuestions: Question[] = [
 ];
 
 export default function ExpandedSurvey() {
-  const [step, setStep] = useState<'info' | 'survey' | 'completed'>('info');
+  const [step, setStep] = useState<'info' | 'survey' | 'processing' | 'completed'>('info');
   const [userInfo, setUserInfo] = useState<UserInfo>({ email: '', mobile: '' });
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Response[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string>('');
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
 
   const currentQuestion = expandedQuestions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / expandedQuestions.length) * 100;
@@ -525,11 +526,40 @@ export default function ExpandedSurvey() {
     }
   };
 
+  const calculateScores = (responses: Response[]) => {
+    const topicScores: { [key: string]: { correct: number; total: number } } = {};
+    
+    responses.forEach(response => {
+      if (!topicScores[response.section]) {
+        topicScores[response.section] = { correct: 0, total: 0 };
+      }
+      topicScores[response.section].total++;
+      // For now, assume all answers are correct (you can implement scoring logic later)
+      topicScores[response.section].correct++;
+    });
+
+    const topicScoresArray = Object.entries(topicScores).map(([name, scores]) => ({
+      name,
+      correct: scores.correct,
+      total: scores.total
+    }));
+
+    const overallScore = topicScoresArray.length > 0 
+      ? Math.round(topicScoresArray.reduce((sum, topic) => sum + (topic.correct / topic.total) * 100, 0) / topicScoresArray.length)
+      : 0;
+
+    return {
+      userName: userInfo.email.split('@')[0],
+      overallScore,
+      topicScoresArray
+    };
+  };
+
   const handleAnswerSelect = (answer: string) => {
     setCurrentAnswer(answer);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentAnswer) {
       const newResponse: Response = {
         questionId: currentQuestion.id,
@@ -544,16 +574,62 @@ export default function ExpandedSurvey() {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setCurrentAnswer('');
       } else {
-        // Survey completed - save to localStorage
-        const surveyData = {
-          userInfo,
-          responses: updatedResponses,
-          completedAt: new Date().toISOString(),
-          testType: 'Expanded Study Abroad Readiness Assessment'
-        };
+        // Survey completed - call LLM analysis
+        setStep('processing');
         
-        localStorage.setItem('expandedSurvey', JSON.stringify(surveyData));
-        setStep('completed');
+        try {
+          const studentData = calculateScores(updatedResponses);
+          console.log('🔄 Calling LLM analysis for Expanded Survey...');
+          
+          const response = await fetch('/api/analyze-results', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(studentData)
+          });
+
+          if (response.ok) {
+            const analysisResults = await response.json();
+            console.log('✅ LLM analysis successful for Expanded Survey');
+            
+            // Save to localStorage with analysis results
+            const surveyData = {
+              userInfo,
+              responses: updatedResponses,
+              completedAt: new Date().toISOString(),
+              testType: 'Expanded Study Abroad Readiness Assessment',
+              analysisResults
+            };
+            
+            localStorage.setItem('expandedSurvey', JSON.stringify(surveyData));
+            setStep('completed');
+          } else {
+            console.error('❌ LLM analysis failed for Expanded Survey');
+            // Fallback to basic completion
+            const surveyData = {
+              userInfo,
+              responses: updatedResponses,
+              completedAt: new Date().toISOString(),
+              testType: 'Expanded Study Abroad Readiness Assessment'
+            };
+            
+            localStorage.setItem('expandedSurvey', JSON.stringify(surveyData));
+            setStep('completed');
+          }
+        } catch (error) {
+          console.error('❌ Error in Expanded Survey analysis:', error);
+          // Fallback to basic completion
+          const surveyData = {
+            userInfo,
+            responses: updatedResponses,
+            completedAt: new Date().toISOString(),
+            testType: 'Expanded Study Abroad Readiness Assessment'
+          };
+          
+          localStorage.setItem('expandedSurvey', JSON.stringify(surveyData));
+          setStep('completed');
+        }
       }
     }
   };
@@ -618,9 +694,85 @@ export default function ExpandedSurvey() {
     );
   }
 
-  if (step === 'completed') {
+  if (step === 'processing') {
     return (
       <div className="max-w-2xl mx-auto mt-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                Analyzing Your Responses...
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Our AI is analyzing your expanded assessment responses to generate personalized insights.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (step === 'completed') {
+    const handleDownloadPDF = async () => {
+      if (isDownloadingPDF) return;
+      
+      setIsDownloadingPDF(true);
+      try {
+        const surveyData = JSON.parse(localStorage.getItem('expandedSurvey') || '{}');
+        if (surveyData.analysisResults) {
+          console.log('🔄 Starting PDF generation for Expanded Survey...');
+          const response = await fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(surveyData.analysisResults)
+          });
+
+          if (response.ok) {
+            console.log('✅ PDF generated successfully for Expanded Survey');
+            const blob = await response.blob();
+            
+            if (blob.size === 0) {
+              console.error('❌ PDF blob is empty');
+              alert('PDF generation failed. Please try again.');
+              return;
+            }
+            
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `expanded-study-abroad-report-${userInfo.email.split('@')[0]}.pdf`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            
+            setTimeout(() => {
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+            }, 1000);
+            
+            console.log('✅ PDF download initiated for Expanded Survey');
+          } else {
+            console.error('❌ PDF generation failed:', response.status);
+            alert('PDF generation failed. Please try again.');
+          }
+        } else {
+          console.error('❌ No analysis results found for Expanded Survey');
+          alert('No analysis results found. Please complete the assessment again.');
+        }
+      } catch (error) {
+        console.error('❌ Error downloading PDF for Expanded Survey:', error);
+        alert('Error downloading PDF. Please try again.');
+      } finally {
+        setIsDownloadingPDF(false);
+      }
+    };
+
+    return (
+      <div className="max-w-4xl mx-auto mt-8 space-y-6">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
@@ -629,7 +781,7 @@ export default function ExpandedSurvey() {
                 Expanded Assessment Completed!
               </h2>
               <p className="text-lg text-muted-foreground">
-                Thank you for completing the Expanded Study Abroad Readiness Assessment. Your responses have been saved.
+                Thank you for completing the Expanded Study Abroad Readiness Assessment. Your AI-powered analysis is ready!
               </p>
               <div className="bg-purple-50 dark:bg-purple-950/20 p-4 rounded-lg">
                 <p className="text-sm">
@@ -639,12 +791,29 @@ export default function ExpandedSurvey() {
                   <strong>Assessment Type:</strong> Expanded Track (42 Questions)
                 </p>
               </div>
-              <Button 
-                onClick={() => window.location.reload()} 
-                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
-              >
-                Take Another Assessment
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloadingPDF}
+                  className={`bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 ${isDownloadingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {isDownloadingPDF ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Generating PDF...
+                    </>
+                  ) : (
+                    '📄 Download Detailed Report'
+                  )}
+                </Button>
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  variant="outline"
+                  className="border-purple-600 text-purple-600 hover:bg-purple-50"
+                >
+                  Take Another Assessment
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
